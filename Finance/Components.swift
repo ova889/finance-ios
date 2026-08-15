@@ -96,7 +96,7 @@ struct ToastWayne: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
         .background(Color(red: 0.078, green: 0.078, blue: 0.098).opacity(0.92))
-        .background(.ultraThinMaterial)
+        .vidrio(saturacion: 1.8)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
         .shadow(color: .black.opacity(0.6), radius: 32, y: 8)

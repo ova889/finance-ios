@@ -12,9 +12,15 @@ struct RegistroView: View {
     @State private var fecha = Date()
     @State private var mensaje: String?
     @State private var exito = false
+    @FocusState private var montoEnfocado: Bool
+    @FocusState private var descripcionEnfocada: Bool
 
     private var descripcionesUsadas: [String] {
         (UserDefaults.standard.array(forKey: "finance_descs_\(userId)") as? [String]) ?? []
+    }
+
+    private var campoFondo: Color {
+        montoEnfocado ? Color.black.opacity(0.5) : Colores.campoBg
     }
 
     var body: some View {
@@ -31,17 +37,19 @@ struct RegistroView: View {
                     VStack(spacing: 0) {
                         TextField("0.00", text: $montoTexto)
                             .keyboardType(.decimalPad)
+                            .focused($montoEnfocado)
                             .font(Fuente(32, .bold))
                             .kerning(-0.5)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                             .padding(.vertical, 20)
-                            .background(Colores.campoBg)
+                            .background(campoFondo)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    .stroke(montoEnfocado ? Colores.accent : Color.white.opacity(0.1), lineWidth: 1)
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .shadow(color: montoEnfocado ? Colores.accent.opacity(0.15) : .clear, radius: 3)
                             .padding(.bottom, 20)
 
                         HStack(spacing: 10) {
@@ -84,14 +92,10 @@ struct RegistroView: View {
 
                             TextField("Add a note", text: $descripcion)
                                 .font(Fuente(16))
+                                .focused($descripcionEnfocada)
                                 .padding(.horizontal, 16)
                                 .frame(height: 48)
-                                .background(Colores.campoBg)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .bordeCampo(enfocado: descripcionEnfocada)
                         }
                         .padding(.bottom, 18)
 
@@ -106,12 +110,7 @@ struct RegistroView: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 48)
                                 .padding(.horizontal, 16)
-                                .background(Colores.campoBg)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .bordeCampo()
                                 .tint(Colores.accent)
                         }
                         .padding(.bottom, 20)

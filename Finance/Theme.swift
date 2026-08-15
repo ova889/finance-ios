@@ -35,6 +35,45 @@ enum Colores {
     static let blancoSuave = Color.white.opacity(0.28)
 }
 
+struct BordeCampo: ViewModifier {
+    var enfocado: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .background(enfocado ? Color.black.opacity(0.5) : Colores.campoBg)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(enfocado ? Colores.accent : Color.white.opacity(0.1), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .shadow(color: enfocado ? Colores.accent.opacity(0.15) : .clear, radius: 3)
+    }
+}
+
+struct Vidrio: ViewModifier {
+    var saturacion: Double = 2.0
+    var contraste: Double = 1.1
+
+    func body(content: Content) -> some View {
+        content.background {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .saturation(saturacion)
+                .contrast(contraste)
+        }
+    }
+}
+
+extension View {
+    func vidrio(saturacion: Double = 2.0, contraste: Double = 1.1) -> some View {
+        modifier(Vidrio(saturacion: saturacion, contraste: contraste))
+    }
+
+    func bordeCampo(enfocado: Bool = false) -> some View {
+        modifier(BordeCampo(enfocado: enfocado))
+    }
+}
+
 struct CristalCard<Contenido: View>: View {
     var padding: CGFloat = 16
     var radius: CGFloat = 24
@@ -47,6 +86,7 @@ struct CristalCard<Contenido: View>: View {
             .padding(.horizontal, paddingHorizontal ?? padding)
             .padding(.vertical, padding)
             .background(Colores.cardBg.opacity(0.55))
+            .vidrio()
             .overlay(alignment: .topLeading) {
                 LinearGradient(
                     gradient: Gradient(colors: [Color.white.opacity(0.06), .clear]),
@@ -89,6 +129,8 @@ struct CampoWayne: View {
     var isSecure: Bool = false
     var tipoTeclado: UIKeyboardType = .default
 
+    @FocusState private var enfocado: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(titulo)
@@ -104,15 +146,11 @@ struct CampoWayne: View {
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(tipoTeclado)
+            .focused($enfocado)
             .font(Fuente(16))
             .padding(.horizontal, 16)
             .frame(height: 48)
-            .background(Colores.campoBg)
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .bordeCampo(enfocado: enfocado)
             .padding(.bottom, 18)
         }
     }
@@ -154,12 +192,7 @@ struct VistaDropdown: View {
                 .padding(.horizontal, compacto ? 8 : 16)
                 .frame(height: altura)
                 .frame(maxWidth: ancho ?? .infinity)
-                .background(Colores.campoBg)
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous)
-                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
+                .bordeCampo(enfocado: abierto)
             }
             .buttonStyle(PressStyle(escala: 0.98))
             .overlay(alignment: alinearDerecha ? .topTrailing : .topLeading) {
@@ -207,7 +240,7 @@ struct VistaDropdown: View {
         .frame(width: max(ancho ?? 220, 200))
         .padding(6)
         .background(Color.black.opacity(0.85))
-        .background(.ultraThinMaterial)
+        .vidrio(saturacion: 1.8)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
         .shadow(color: .black.opacity(0.6), radius: 40, y: 12)

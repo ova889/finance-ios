@@ -17,6 +17,7 @@ struct DashboardView: View {
     @State private var nuevoLimite = ""
     @State private var cargado = false
     @State private var presupuestoAEliminar: Presupuesto?
+    @FocusState private var limiteEnfocado: Bool
 
     init(userId: String) {
         self.userId = userId
@@ -332,12 +333,11 @@ struct DashboardView: View {
                             .foregroundColor(Colores.textoSec)
                         TextField("200.00", text: $nuevoLimite)
                             .keyboardType(.decimalPad)
-                            .font(Fuente(13))
-                            .padding(.horizontal, 12)
-                            .frame(height: 40)
-                            .background(Colores.campoBg)
-                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .focused($limiteEnfocado)
+                            .font(Fuente(16))
+                            .padding(.horizontal, 16)
+                            .frame(height: 48)
+                            .bordeCampo(enfocado: limiteEnfocado)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -351,8 +351,8 @@ struct DashboardView: View {
                             .foregroundColor(.white)
                             .frame(height: 40)
                             .frame(maxWidth: .infinity)
-                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.2), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.2), lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
                     .buttonStyle(ScalePressStyle(presionado: .constant(false)))
                 }

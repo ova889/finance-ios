@@ -129,9 +129,7 @@ struct HistorialView: View {
                             .labelsHidden()
                             .frame(height: DesignTokens.campoAltura)
                             .padding(.horizontal, 12)
-                            .background(Colores.campoBg)
-                            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
-                            .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                            .bordeCampo()
                             .tint(Colores.accent)
                             .onChange(of: desde) { _, _ in fechasActivas = true }
                     }
@@ -145,9 +143,7 @@ struct HistorialView: View {
                             .labelsHidden()
                             .frame(height: DesignTokens.campoAltura)
                             .padding(.horizontal, 12)
-                            .background(Colores.campoBg)
-                            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
-                            .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                            .bordeCampo()
                             .tint(Colores.accent)
                             .onChange(of: hasta) { _, _ in fechasActivas = true }
                     }
@@ -173,28 +169,32 @@ struct HistorialView: View {
     }
 
     private var resumenFiltros: some View {
-        HStack(spacing: 10) {
-            CristalCard(padding: 12) {
-                VStack(spacing: 2) {
+        HStack(spacing: 5) {
+            CristalCard(padding: 10, radius: 14, paddingHorizontal: 6) {
+                VStack(spacing: 4) {
                     Text("Income")
-                        .font(Fuente(10, .medium))
+                        .font(Fuente(8, .medium))
                         .textCase(.uppercase)
+                        .kerning(0.5)
                         .foregroundColor(Color.white.opacity(0.28))
                     MontoPrivado(texto: formatoMonto(totalIngresos))
-                        .font(Fuente(17, .bold))
+                        .font(Fuente(15, .bold))
+                        .kerning(-0.5)
                         .monospacedDigit()
                         .foregroundColor(Colores.verde)
                         .frame(maxWidth: .infinity)
                 }
             }
-            CristalCard(padding: 12) {
-                VStack(spacing: 2) {
+            CristalCard(padding: 10, radius: 14, paddingHorizontal: 6) {
+                VStack(spacing: 4) {
                     Text("Expenses")
-                        .font(Fuente(10, .medium))
+                        .font(Fuente(8, .medium))
                         .textCase(.uppercase)
+                        .kerning(0.5)
                         .foregroundColor(Color.white.opacity(0.28))
                     MontoPrivado(texto: formatoMonto(totalGastos))
-                        .font(Fuente(17, .bold))
+                        .font(Fuente(15, .bold))
+                        .kerning(-0.5)
                         .monospacedDigit()
                         .foregroundColor(Colores.rojo)
                         .frame(maxWidth: .infinity)
@@ -211,13 +211,14 @@ struct HistorialView: View {
             TextField("Search transactions...", text: $busqueda)
                 .font(Fuente(14))
                 .foregroundColor(.white)
+                .focused($busquedaEnfocada)
         }
         .padding(.horizontal, 16)
         .frame(height: 44)
-        .background(Colores.campoBg)
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .bordeCampo(enfocado: busquedaEnfocada)
     }
+
+    @FocusState private var busquedaEnfocada: Bool
 
     private var lista: some View {
         VStack(spacing: 0) {
@@ -277,7 +278,7 @@ struct HistorialView: View {
                 )
             }
         )
-        .background(.ultraThinMaterial)
+        .vidrio()
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(Color.white.opacity(0.04), lineWidth: 1))
         .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
@@ -382,6 +383,8 @@ struct EditarMovimientoSheet: View {
     @State private var montoTexto: String
     @State private var descripcion: String
     @State private var fecha: Date
+    @FocusState private var montoEnfocado: Bool
+    @FocusState private var descripcionEnfocada: Bool
 
     init(movimiento: Movimiento) {
         self.movimiento = movimiento
@@ -422,11 +425,10 @@ struct EditarMovimientoSheet: View {
                         TextField("0.00", text: $montoTexto)
                             .keyboardType(.decimalPad)
                             .font(Fuente(16))
+                            .focused($montoEnfocado)
                             .padding(.horizontal, 16)
                             .frame(height: 48)
-                            .background(Colores.campoBg)
-                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .bordeCampo(enfocado: montoEnfocado)
                     }
                     .padding(.bottom, 18)
 
@@ -436,11 +438,10 @@ struct EditarMovimientoSheet: View {
                             .foregroundColor(Colores.textoSec)
                         TextField("Add a note", text: $descripcion)
                             .font(Fuente(16))
+                            .focused($descripcionEnfocada)
                             .padding(.horizontal, 16)
                             .frame(height: 48)
-                            .background(Colores.campoBg)
-                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .bordeCampo(enfocado: descripcionEnfocada)
                     }
                     .padding(.bottom, 18)
 
@@ -454,9 +455,7 @@ struct EditarMovimientoSheet: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
                             .padding(.horizontal, 16)
-                            .background(Colores.campoBg)
-                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .bordeCampo()
                             .tint(Colores.accent)
                     }
                     .padding(.bottom, 20)

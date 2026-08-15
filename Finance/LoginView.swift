@@ -53,7 +53,7 @@ struct LoginView: View {
                                         .padding(.bottom, 6)
 
                                     Text("FINANCE")
-                                        .font(Fuente(20, .bold))
+                                        .font(Fuente(22, .bold))
                                         .kerning(3)
                                         .foregroundColor(.white)
 

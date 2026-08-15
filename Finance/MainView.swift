@@ -106,7 +106,7 @@ struct MainView: View {
         .padding(.top, 8)
         .padding(.bottom, 8)
         .background(Color.black.opacity(0.55))
-        .background(.ultraThinMaterial)
+        .vidrio(saturacion: 1.8)
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.white.opacity(0.03)).frame(height: 1).allowsHitTesting(false)
         }
@@ -145,7 +145,7 @@ struct MainView: View {
         .padding(.horizontal, 16)
         .frame(width: 280, height: DesignTokens.navPillAltura)
         .background(DesignTokens.navPillFondo)
-        .background(.ultraThinMaterial)
+        .vidrio()
         .clipShape(Capsule())
         .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
         .overlay(alignment: .top) {

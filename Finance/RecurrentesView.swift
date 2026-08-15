@@ -14,6 +14,8 @@ struct RecurrentesView: View {
     @State private var montoTexto = ""
     @State private var descripcion = ""
     @State private var dia = 1
+    @FocusState private var montoEnfocado: Bool
+    @FocusState private var descripcionEnfocada: Bool
 
     init(userId: String) {
         self.userId = userId
@@ -104,7 +106,7 @@ struct RecurrentesView: View {
                                 }
                                 .padding(14)
                                 .background(Colores.cardBg.opacity(0.55))
-                                .background(.ultraThinMaterial)
+                                .vidrio()
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                 .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Color.white.opacity(0.04), lineWidth: 1))
                             }
@@ -142,12 +144,11 @@ struct RecurrentesView: View {
                 .foregroundColor(Colores.textoSec)
             TextField("0.00", text: $montoTexto)
                 .keyboardType(.decimalPad)
-                .font(Fuente(14))
-                .padding(.horizontal, 12)
+                .focused($montoEnfocado)
+                .font(Fuente(16))
+                .padding(.horizontal, 16)
                 .frame(height: DesignTokens.campoAltura)
-                .background(Colores.campoBg)
-                .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
+                .bordeCampo(enfocado: montoEnfocado)
         }
     }
 
@@ -163,9 +164,7 @@ struct RecurrentesView: View {
             }
             .padding(.horizontal, 10)
             .frame(height: DesignTokens.campoAltura)
-            .background(Colores.campoBg)
-            .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
+            .bordeCampo()
         }
     }
 
@@ -197,12 +196,12 @@ struct RecurrentesView: View {
                 .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             TextField("Netflix", text: $descripcion)
-                .font(Fuente(14))
-                .padding(.horizontal, 12)
+                .font(Fuente(16))
+                .focused($descripcionEnfocada)
+                .padding(.horizontal, 16)
                 .frame(height: DesignTokens.campoAltura)
-                .background(Colores.campoBg)
-                .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
+                .bordeCampo(enfocado: descripcionEnfocada)
+                .bordeCampo(enfocado: descripcionEnfocada)
         }
     }
 
