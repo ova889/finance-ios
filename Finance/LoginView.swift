@@ -22,21 +22,6 @@ struct BatSymbol: Shape {
     }
 }
 
-struct WayIcono: View {
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color.white.opacity(0.03))
-                .frame(width: 44, height: 44)
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-            BatSymbol()
-                .fill(Color.white.opacity(0.6))
-                .frame(width: 26, height: 15.6)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-    }
-}
-
 struct LoginView: View {
     @Environment(\.modelContext) private var context
     @EnvironmentObject private var session: Session
@@ -47,70 +32,81 @@ struct LoginView: View {
     @State private var confirmacion = ""
     @State private var error: String?
     @State private var exito: String?
+    @State private var animada = false
 
     var body: some View {
         ZStack {
             Fondo.gradiente.ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    Spacer(minLength: 70)
+            VStack(spacing: 0) {
+                Spacer(minLength: 40)
 
-                    VStack(spacing: 20) {
-                        WayIcono()
+                CristalCard(padding: 28) {
+                    VStack(spacing: 0) {
+                        VStack(spacing: 8) {
+                            BatSymbol()
+                                .fill(Color.white.opacity(0.7))
+                                .frame(width: 44, height: 26.4)
+                                .shadow(color: .white.opacity(0.05), radius: 20)
+                                .padding(.bottom, 6)
 
-                        Text("FINANCE")
-                            .font(.system(size: 22, weight: .bold))
-                            .kerning(3)
-                            .foregroundColor(.white)
+                            Text("FINANCE")
+                                .font(.system(size: 20, weight: .bold))
+                                .kerning(3)
+                                .foregroundColor(.white)
 
-                        Rectangle()
-                            .fill(Colores.accent)
-                            .frame(width: 32, height: 1.5)
-                            .shadow(color: Colores.accent.opacity(0.3), radius: 6)
-                    }
+                            Rectangle()
+                                .fill(Colores.accent)
+                                .frame(width: 32, height: 1.5)
+                                .shadow(color: Colores.accent.opacity(0.3), radius: 6)
+                        }
 
-                    Spacer(minLength: 32)
+                        if let error = error {
+                            AlertaWayne(mensaje: error, exito: false)
+                                .padding(.top, 22)
+                        }
+                        if let exito = exito {
+                            AlertaWayne(mensaje: exito, exito: true)
+                                .padding(.top, 22)
+                        }
 
-                    if let error = error {
-                        AlertaWayne(mensaje: error, exito: false)
-                    }
-                    if let exito = exito {
-                        AlertaWayne(mensaje: exito, exito: true)
-                    }
+                        VStack(alignment: .leading, spacing: 0) {
+                            CampoWayne(titulo: "User ID", placeholder: "USER ID", texto: $usuario)
+                                .padding(.top, 24)
+                            CampoWayne(titulo: "Access Code", placeholder: "ACCESS CODE", texto: $password, isSecure: true)
+                            if modoRegistro {
+                                CampoWayne(titulo: "Confirm Access Code", placeholder: "CONFIRM ACCESS CODE", texto: $confirmacion, isSecure: true)
+                            }
+                        }
 
-                    VStack(alignment: .leading, spacing: 0) {
-                        CampoWayne(titulo: "User ID", placeholder: "USER ID", texto: $usuario)
-                        CampoWayne(titulo: "Access Code", placeholder: "ACCESS CODE", texto: $password, isSecure: true)
-                        if modoRegistro {
-                            CampoWayne(titulo: "Confirm Access Code", placeholder: "CONFIRM ACCESS CODE", texto: $confirmacion, isSecure: true)
+                        BtnWayne(texto: modoRegistro ? "CREATE ACCOUNT" : "AUTHORIZE") {
+                            accionPrincipal()
+                        }
+                        .padding(.top, 2)
+
+                        Button(action: { withAnimation(.easeInOut(duration: 0.25)) {
+                            modoRegistro.toggle()
+                            error = nil
+                            exito = nil
+                        } }) {
+                            Text(modoRegistro ? "← Back to login" : "Create your own account")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(Colores.textoSec)
+                                .padding(.top, 18)
                         }
                     }
-
-                    BtnWayne(texto: modoRegistro ? "CREATE ACCOUNT" : "AUTHORIZE") {
-                        accionPrincipal()
-                    }
-                    .padding(.top, 4)
-
-                    Button(action: { withAnimation(.easeInOut(duration: 0.25)) {
-                        modoRegistro.toggle()
-                        error = nil
-                        exito = nil
-                    } }) {
-                        Text(modoRegistro ? "← Back to login" : "Create your own account")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(Colores.textoSec)
-                            .padding(.top, 18)
-                    }
-
-                    Spacer(minLength: 40)
                 }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 24)
                 .frame(maxWidth: 400)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 24)
+                .opacity(animada ? 1 : 0)
+                .offset(y: animada ? 0 : 12)
+                .animation(.easeOut(duration: 0.6), value: animada)
+
+                Spacer(minLength: 40)
             }
+            .ignoresSafeArea(.keyboard)
         }
+        .onAppear { animada = true }
     }
 
     private func accionPrincipal() {

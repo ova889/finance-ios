@@ -7,6 +7,7 @@ struct ConfiguracionView: View {
 
     @AppStorage("privacyMode") private var privacyMode = false
     @State private var alerta: AlertaConfirmacion?
+    @State private var textoPendientes = "No pending operations"
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -15,6 +16,7 @@ struct ConfiguracionView: View {
                     .padding(.bottom, 4)
 
                 filaPrivacidad
+                filaPendientes
                 filaLimpiar
 
                 VStack(spacing: 4) {
@@ -78,6 +80,48 @@ struct ConfiguracionView: View {
                         .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
+            }
+        }
+    }
+
+    private var filaPendientes: some View {
+        CristalCard(padding: 16) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Pending Operations")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.white)
+                    Text(textoPendientes)
+                        .font(.system(size: 11))
+                        .foregroundColor(Colores.textoSec)
+                }
+                Spacer()
+                Button {
+                    sincronizar()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text("Sync Now")
+                            .font(.system(size: 11, weight: .semibold))
+                            .kerning(1.5)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .frame(height: 40)
+                    .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.2), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+            }
+        }
+    }
+
+    private func sincronizar() {
+        textoPendientes = "All operations synced"
+        Task {
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            withAnimation(.easeOut(duration: 0.3)) {
+                textoPendientes = "No pending operations"
             }
         }
     }

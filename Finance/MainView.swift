@@ -64,16 +64,16 @@ struct MainView: View {
     }
 
     private var topBar: some View {
-        HStack {
+        HStack(spacing: 8) {
             Button {
                 activarPanico()
             } label: {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     BatSymbol()
                         .fill(Color.white.opacity(0.5))
-                        .frame(width: 18, height: 10.8)
+                        .frame(width: 16, height: 9.6)
                     Text("FINANCE")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 12, weight: .semibold))
                         .kerning(1.5)
                         .foregroundColor(.white.opacity(0.45))
                 }
@@ -82,9 +82,21 @@ struct MainView: View {
             Spacer()
 
             Text(formatoMonto(balance))
-                .font(.system(size: 13, weight: .bold))
+                .font(.system(size: 12, weight: .bold))
+                .kerning(-0.3)
                 .foregroundColor(.white)
                 .monospacedDigit()
+                .padding(.trailing, 8)
+                .overlay(alignment: .trailing) {
+                    Rectangle()
+                        .fill(Color.white.opacity(0.06))
+                        .frame(width: 1, height: 14)
+                }
+
+            Circle()
+                .fill(Colores.verde)
+                .frame(width: 6, height: 6)
+                .shadow(color: Colores.verde.opacity(0.4), radius: 6)
 
             Button(action: { session.cerrarSesion() }) {
                 Text("Sign Out")
@@ -99,9 +111,9 @@ struct MainView: View {
                     )
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 10)
+        .padding(.horizontal, 12)
+        .padding(.top, 8)
+        .padding(.bottom, 8)
         .background(Color.black.opacity(0.55))
         .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
@@ -118,7 +130,7 @@ struct MainView: View {
                     }
                 } label: {
                     Image(systemName: item.icono)
-                        .font(.system(size: item == .registro ? 17 : 15, weight: item == .registro ? .heavy : .regular))
+                        .font(.system(size: item == .registro ? 21 : 20, weight: item == .registro ? .heavy : .regular))
                         .frame(width: 38, height: 38)
                         .foregroundColor(tab == item ? .white : .white.opacity(0.25))
                         .background(tab == item ? Color.white.opacity(0.08) : .clear)
@@ -127,12 +139,12 @@ struct MainView: View {
                 }
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 14)
         .frame(height: 52)
-        .background(Color.black.opacity(0.4))
+        .background(Color.white.opacity(0.06))
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
+        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
         .overlay(alignment: .top) {
             Capsule().fill(Color.white.opacity(0.06)).frame(height: 12).frame(maxWidth: .infinity).padding(.horizontal, 1)
         }

@@ -37,14 +37,16 @@ struct DoughnutChart: View {
     var body: some View {
         VStack(spacing: 12) {
             GeometryReader { geo in
-                let ancho = min(geo.size.width, geo.size.height) * 0.16
+                let ancho = min(geo.size.width, geo.size.height) * 0.11
                 ZStack {
+                    Circle()
+                        .stroke(Color(red: 0.02, green: 0.02, blue: 0.02), style: StrokeStyle(lineWidth: ancho, lineCap: .butt))
                     ForEach(cortes, id: \.slice.id) { corte in
                         Circle()
                             .trim(from: corte.inicio, to: corte.fin)
                             .stroke(corte.slice.color, style: StrokeStyle(lineWidth: ancho, lineCap: .butt))
                             .rotationEffect(.degrees(-90))
-                            .padding(2)
+                            .padding(1)
                     }
                 }
                 .frame(width: min(geo.size.width, geo.size.height),
@@ -53,18 +55,18 @@ struct DoughnutChart: View {
             }
             .frame(height: 190)
 
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
                 ForEach(slices) { slice in
                     HStack(spacing: 6) {
                         Circle()
                             .fill(slice.color)
                             .frame(width: 5, height: 5)
                         Text(slice.nombre)
-                            .font(.system(size: 11))
+                            .font(.system(size: 10))
                             .foregroundColor(.white.opacity(0.45))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Text(formatoMonto(slice.valor))
-                            .font(.system(size: 11))
+                            .font(.system(size: 10))
                             .foregroundColor(.white.opacity(0.45))
                     }
                 }

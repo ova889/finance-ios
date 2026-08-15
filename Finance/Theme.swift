@@ -32,21 +32,34 @@ struct CristalCard<Contenido: View>: View {
         contenido()
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(padding)
-            .background(
-                ZStack {
-                    Colores.cardBg.opacity(0.55)
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.white.opacity(0.06), .clear, .clear]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                }
-            )
-            .background(.ultraThinMaterial)
+            .background(Colores.cardBg.opacity(0.55))
+            .overlay(alignment: .topLeading) {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white.opacity(0.06), .clear]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
+            .overlay(alignment: .top) {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white.opacity(0.12), Color.white.opacity(0.04)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 1)
+            }
+            .overlay(alignment: .bottom) {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white.opacity(0.04), Color.white.opacity(0.0)]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+                .frame(height: 1)
+            }
             .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                    .stroke(Color.white.opacity(0.04), lineWidth: 1)
             )
             .shadow(color: .black.opacity(0.4), radius: 32, x: 0, y: 8)
     }

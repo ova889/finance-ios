@@ -5,13 +5,17 @@ struct RootView: View {
     @EnvironmentObject private var session: Session
     @Environment(\.modelContext) private var context
 
+    @State private var enLogin = false
+
     var body: some View {
         Group {
             if let usuario = session.usuarioActual {
                 MainView(userId: usuario)
                     .id(usuario)
-            } else {
+            } else if enLogin {
                 LoginView()
+            } else {
+                LandingView { enLogin = true }
             }
         }
         .animation(.easeInOut(duration: 0.25), value: session.usuarioActual)

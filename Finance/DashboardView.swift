@@ -15,6 +15,7 @@ struct DashboardView: View {
     @State private var mesSeleccionado = mesActual()
     @State private var nuevaCategoria = Categorias.gasto[0]
     @State private var nuevoLimite = ""
+    @State private var cargado = false
 
     init(userId: String) {
         self.userId = userId
@@ -97,26 +98,36 @@ struct DashboardView: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 12) {
                 cabecera
+                    .opacity(cargado ? 1 : 0)
+                    .offset(x: cargado ? 0 : -8)
+                    .animation(.easeOut(duration: 0.35).delay(0.25), value: cargado)
 
                 filaResumen
+                    .offset(y: cargado ? 0 : 36)
+                    .opacity(cargado ? 1 : 0)
+                    .scaleEffect(cargado ? 1 : 0.95)
+                    .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.15), value: cargado)
 
-                HStack(alignment: .top, spacing: 12) {
-                    tarjetaCategorias
-                    tarjetaRecientes
-                }
-
+                tarjetaCategorias
+                    .entrada(retraso: 0.22, cargado: cargado)
+                tarjetaRecientes
+                    .entrada(retraso: 0.29, cargado: cargado)
                 tarjetaPresupuestos
+                    .entrada(retraso: 0.36, cargado: cargado)
                 tarjetaRecurrentes
+                    .entrada(retraso: 0.43, cargado: cargado)
                 tarjetaTendencias
+                    .entrada(retraso: 0.5, cargado: cargado)
             }
             .padding(.horizontal, 14)
             .padding(.top, 6)
             .padding(.bottom, 100)
         }
-        .task {
+        .onAppear {
+            cargado = true
             comprobarRecurrentes()
         }
-        .sheet(isPresented: $mostrarRecurrentes) {
+        .fullScreenCover(isPresented: $mostrarRecurrentes) {
             RecurrentesView(userId: userId)
         }
         .overlay(alignment: .bottom) {
@@ -151,7 +162,7 @@ struct DashboardView: View {
                         .foregroundColor(.white.opacity(0.5))
                 }
                 .padding(.horizontal, 10)
-                .frame(height: 32)
+                .frame(width: 130, height: 32)
                 .background(Colores.campoBg)
                 .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
@@ -173,7 +184,7 @@ struct DashboardView: View {
     }
 
     private var filaResumen: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 5) {
             TarjetaResumen(etiqueta: "Income", monto: formatoMonto(ingresos), color: Colores.verde)
             TarjetaResumen(etiqueta: "Expenses", monto: formatoMonto(gastos), color: Colores.rojo)
             TarjetaResumen(etiqueta: "Balance", monto: formatoMonto(saldo), color: .white)
@@ -472,20 +483,38 @@ struct TarjetaResumen: View {
     let color: Color
 
     var body: some View {
-        CristalCard(padding: 18) {
+        CristalCard(padding: 10, radius: 14) {
             VStack(spacing: 4) {
                 Text(etiqueta)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: 8, weight: .medium))
                     .kerning(0.5)
                     .textCase(.uppercase)
                     .foregroundColor(Color.white.opacity(0.28))
                 MontoPrivado(texto: monto)
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.system(size: 15, weight: .bold))
                     .kerning(-0.5)
                     .monospacedDigit()
                     .foregroundColor(color)
                     .frame(maxWidth: .infinity)
             }
         }
+    }
+}
+
+struct EntradaTarjeta: ViewModifier {
+    var retraso: Double
+    var cargado: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .offset(y: cargado ? 0 : 18)
+            .opacity(cargado ? 1 : 0)
+            .animation(.easeOut(duration: 0.5).delay(retraso), value: cargado)
+    }
+}
+
+extension View {
+    func entrada(retraso: Double, cargado: Bool) -> some View {
+        modifier(EntradaTarjeta(retraso: retraso, cargado: cargado))
     }
 }
