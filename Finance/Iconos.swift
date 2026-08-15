@@ -59,14 +59,14 @@ struct IconoEngranaje: Shape {
         var path = Path()
 
         for k in 0..<8 {
-            let ang = Double(k) * 45 * .pi / 180
+            let ang = CGFloat(k) * .pi / 4
             let p = CGPoint(x: centro.x + 5.9 * s * cos(ang), y: centro.y + 5.9 * s * sin(ang))
             if k == 0 { path.move(to: p) } else { path.addLine(to: p) }
         }
         path.closeSubpath()
 
         for k in 0..<8 {
-            let ang = (22.5 + 45 * Double(k)) * .pi / 180
+            let ang = (CGFloat(k) * .pi / 4) + .pi / 8
             let inner = CGPoint(x: centro.x + 5.45 * s * cos(ang), y: centro.y + 5.45 * s * sin(ang))
             let outer = CGPoint(x: centro.x + 9.0 * s * cos(ang), y: centro.y + 9.0 * s * sin(ang))
             path.move(to: inner)

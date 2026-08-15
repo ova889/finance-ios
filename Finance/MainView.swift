@@ -112,6 +112,21 @@ struct MainView: View {
         }
     }
 
+    private func iconoNavegacion(_ item: TabPrincipal) -> some View {
+        let activo = tab == item
+        let color = activo ? Color.white : Color.white.opacity(0.25)
+        switch item {
+        case .dashboard:
+            return AnyView(IconoGrid().stroke(color, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)))
+        case .historial:
+            return AnyView(IconoReloj().stroke(color, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)))
+        case .registro:
+            return AnyView(IconoMas().stroke(color, style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)))
+        case .configuracion:
+            return AnyView(IconoEngranaje().stroke(color, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)))
+        }
+    }
+
     private var barraNavegacion: some View {
         HStack(spacing: 6) {
             ForEach(TabPrincipal.allCases, id: \.self) { item in
@@ -120,20 +135,12 @@ struct MainView: View {
                         tab = item
                     }
                 } label: {
-                    Group {
-                        switch item {
-                        case .dashboard: IconoGrid()
-                        case .historial: IconoReloj()
-                        case .registro: IconoMas()
-                        case .configuracion: IconoEngranaje()
-                        }
-                    }
-                    .stroke(tab == item ? .white : .white.opacity(0.25), style: StrokeStyle(lineWidth: item == .registro ? 2.5 : 1.5, lineCap: .round, lineJoin: .round))
-                    .frame(width: 22, height: 22)
-                    .frame(width: 38, height: 38)
-                    .background(tab == item ? Color.white.opacity(0.08) : .clear)
-                    .clipShape(Circle())
-                    .scaleEffect(tab == item ? 1.0 : 0.96)
+                    iconoNavegacion(item)
+                        .frame(width: 22, height: 22)
+                        .frame(width: 38, height: 38)
+                        .background(tab == item ? Color.white.opacity(0.08) : .clear)
+                        .clipShape(Circle())
+                        .scaleEffect(tab == item ? 1.0 : 0.96)
                 }
             }
         }
