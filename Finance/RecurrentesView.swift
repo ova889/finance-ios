@@ -51,8 +51,7 @@ struct RecurrentesView: View {
             .padding(.top, 10)
             .padding(.bottom, 6)
 
-            ScrollView(showsIndicators: false)
-            .scrollDismissesKeyboard(.interactively) {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 12) {
                     CristalCard(padding: 16) {
                         VStack(spacing: 12) {
@@ -118,6 +117,7 @@ struct RecurrentesView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 40)
             }
+        .scrollDismissesKeyboard(.interactively)
         }
         .background(Fondo.gradiente.ignoresSafeArea())
         .preferredColorScheme(.dark)

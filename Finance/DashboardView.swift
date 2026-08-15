@@ -97,8 +97,7 @@ struct DashboardView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false)
-            .scrollDismissesKeyboard(.interactively) {
+        ScrollView(showsIndicators: false) {
             VStack(spacing: 12) {
                 cabecera
                     .opacity(cargado ? 1 : 0)
@@ -128,6 +127,7 @@ struct DashboardView: View {
             .padding(.top, 6)
             .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
+        .scrollDismissesKeyboard(.interactively)
         .onAppear {
             cargado = true
             comprobarRecurrentes()

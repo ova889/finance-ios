@@ -25,8 +25,7 @@ struct RegistroView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false)
-            .scrollDismissesKeyboard(.interactively) {
+        ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
                 EtiquetaTitulo(texto: "Add Transaction")
                     .padding(.bottom, 14)
@@ -133,6 +132,7 @@ struct RegistroView: View {
             .padding(.top, 6)
             .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
+        .scrollDismissesKeyboard(.interactively)
         .onAppear { cargado = true }
     }
 

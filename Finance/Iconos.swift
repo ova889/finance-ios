@@ -58,20 +58,21 @@ struct IconoEngranaje: Shape {
         let c = CGPoint(x: 12 * s, y: 12 * s)
         var path = Path()
 
-        let rT = 10.78 * s
-        let rA = 1.65 * s
-        let a0 = 24.9 * .pi / 180
-        let medio = 34.2 * .pi / 180
+        let rad = Double.pi / 180
+        let rT = 10.78
+        let rA = 1.65
 
         for k in 0..<8 {
-            let a = a0 + CGFloat(k) * .pi / 4
-            let cc = CGPoint(x: c.x + rT * cos(a), y: c.y + rT * sin(a))
-            let e1 = CGPoint(x: cc.x + rA * cos(a - medio), y: cc.y + rA * sin(a - medio))
-            let e2 = CGPoint(x: cc.x + rA * cos(a + medio), y: cc.y + rA * sin(a + medio))
+            let a = (24.9 + Double(k) * 45) * rad
+            let cx = c.x + CGFloat(rT * cos(a)) * s
+            let cy = c.y + CGFloat(rT * sin(a)) * s
+            let cc = CGPoint(x: cx, y: cy)
+            let e1 = CGPoint(x: cx + CGFloat(rA * cos(a - 34.2 * rad)) * s, y: cy + CGFloat(rA * sin(a - 34.2 * rad)) * s)
+            let e2 = CGPoint(x: cx + CGFloat(rA * cos(a + 34.2 * rad)) * s, y: cy + CGFloat(rA * sin(a + 34.2 * rad)) * s)
             path.move(to: e1)
             path.addArc(
                 center: cc,
-                radius: rA,
+                radius: CGFloat(rA) * s,
                 startAngle: .radians(Double(atan2(e1.y - cc.y, e1.x - cc.x))),
                 endAngle: .radians(Double(atan2(e2.y - cc.y, e2.x - cc.x))),
                 clockwise: true

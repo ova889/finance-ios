@@ -39,8 +39,7 @@ struct LoginView: View {
             Fondo.gradiente.ignoresSafeArea()
 
             GeometryReader { geo in
-                ScrollView(showsIndicators: false)
-            .scrollDismissesKeyboard(.interactively) {
+                ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         Spacer(minLength: 30)
 
@@ -112,6 +111,7 @@ struct LoginView: View {
                     .frame(maxWidth: 400)
                     .frame(maxWidth: .infinity)
                 }
+        .scrollDismissesKeyboard(.interactively)
             }
         }
         .onAppear { animada = true }

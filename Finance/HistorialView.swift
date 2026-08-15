@@ -70,8 +70,7 @@ struct HistorialView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false)
-            .scrollDismissesKeyboard(.interactively) {
+        ScrollView(showsIndicators: false) {
             VStack(spacing: 12) {
                 cabecera
                     .opacity(cargado ? 1 : 0)
@@ -423,8 +422,7 @@ struct EditarMovimientoSheet: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
 
-            ScrollView(showsIndicators: false)
-            .scrollDismissesKeyboard(.interactively) {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     VistaDropdown(
                         titulo: "Category",
@@ -479,6 +477,7 @@ struct EditarMovimientoSheet: View {
                     }
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .padding(.horizontal, 20)
             .padding(.top, 6)
         }
