@@ -39,6 +39,7 @@ struct CristalCard<Contenido: View>: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
+                .allowsHitTesting(false)
             }
             .overlay(alignment: .top) {
                 LinearGradient(
@@ -47,6 +48,7 @@ struct CristalCard<Contenido: View>: View {
                     endPoint: .bottom
                 )
                 .frame(height: 1)
+                .allowsHitTesting(false)
             }
             .overlay(alignment: .bottom) {
                 LinearGradient(
@@ -55,6 +57,7 @@ struct CristalCard<Contenido: View>: View {
                     endPoint: .top
                 )
                 .frame(height: 1)
+                .allowsHitTesting(false)
             }
             .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
             .overlay(

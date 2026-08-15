@@ -29,7 +29,9 @@ struct ConfiguracionView: View {
                 }
                 .padding(.top, 10)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: 720)
+            .frame(maxWidth: .infinity)
             .padding(.top, 6)
             .padding(.bottom, 100)
         }

@@ -119,7 +119,9 @@ struct DashboardView: View {
                 tarjetaTendencias
                     .entrada(retraso: 0.5, cargado: cargado)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: 720)
+            .frame(maxWidth: .infinity)
             .padding(.top, 6)
             .padding(.bottom, 100)
         }

@@ -117,7 +117,7 @@ struct MainView: View {
         .background(Color.black.opacity(0.55))
         .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(Color.white.opacity(0.03)).frame(height: 1)
+            Rectangle().fill(Color.white.opacity(0.03)).frame(height: 1).allowsHitTesting(false)
         }
     }
 
@@ -130,7 +130,7 @@ struct MainView: View {
                     }
                 } label: {
                     Image(systemName: item.icono)
-                        .font(.system(size: item == .registro ? 21 : 20, weight: item == .registro ? .heavy : .regular))
+                        .font(.system(size: item == .registro ? 22 : 21, weight: item == .registro ? .heavy : .regular))
                         .frame(width: 38, height: 38)
                         .foregroundColor(tab == item ? .white : .white.opacity(0.25))
                         .background(tab == item ? Color.white.opacity(0.08) : .clear)
@@ -140,15 +140,15 @@ struct MainView: View {
             }
         }
         .padding(.horizontal, 14)
-        .frame(height: 52)
-        .background(Color.white.opacity(0.06))
+        .frame(width: 280, height: 55)
+        .background(Color.black.opacity(0.45))
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
+        .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
         .overlay(alignment: .top) {
-            Capsule().fill(Color.white.opacity(0.06)).frame(height: 12).frame(maxWidth: .infinity).padding(.horizontal, 1)
+            Capsule().fill(Color.white.opacity(0.06)).frame(height: 12).frame(maxWidth: .infinity).padding(.horizontal, 1).allowsHitTesting(false)
         }
-        .shadow(color: .black.opacity(0.35), radius: 32, y: 8)
+        .shadow(color: .black.opacity(0.4), radius: 32, y: 8)
         .padding(.bottom, 16)
     }
 

@@ -124,7 +124,7 @@ struct RegistroView: View {
                 .frame(maxWidth: 480)
                 .frame(maxWidth: .infinity)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 10)
             .padding(.top, 6)
             .padding(.bottom, 100)
         }
