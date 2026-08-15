@@ -31,7 +31,7 @@ struct RegistroView: View {
                     VStack(spacing: 0) {
                         TextField("0.00", text: $montoTexto)
                             .keyboardType(.decimalPad)
-                            .font(.system(size: 32, weight: .bold))
+                            .font(Fuente(32, .bold))
                             .kerning(-0.5)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
@@ -58,7 +58,7 @@ struct RegistroView: View {
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Description (optional)")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(Fuente(11, .medium))
                                 .foregroundColor(Colores.textoSec)
 
                             if !descripcionesUsadas.isEmpty {
@@ -69,7 +69,7 @@ struct RegistroView: View {
                                                 descripcion = desc
                                             } label: {
                                                 Text(desc)
-                                                    .font(.system(size: 12))
+                                                    .font(Fuente(12))
                                                     .foregroundColor(.white.opacity(0.6))
                                                     .padding(.horizontal, 10)
                                                     .padding(.vertical, 5)
@@ -83,7 +83,7 @@ struct RegistroView: View {
                             }
 
                             TextField("Add a note", text: $descripcion)
-                                .font(.system(size: 16))
+                                .font(Fuente(16))
                                 .padding(.horizontal, 16)
                                 .frame(height: 48)
                                 .background(Colores.campoBg)
@@ -97,7 +97,7 @@ struct RegistroView: View {
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Date")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(Fuente(11, .medium))
                                 .foregroundColor(Colores.textoSec)
                             DatePicker("", selection: $fecha, displayedComponents: .date)
                                 .labelsHidden()
@@ -189,7 +189,7 @@ struct ChipTipo: View {
     var body: some View {
         Button(action: accion) {
             Text(texto)
-                .font(.system(size: 13, weight: .semibold))
+                .font(Fuente(13, .semibold))
                 .kerning(1)
                 .foregroundColor(colorFrente)
                 .frame(maxWidth: .infinity)

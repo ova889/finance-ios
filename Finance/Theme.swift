@@ -11,6 +11,10 @@ enum Fondo {
     )
 }
 
+func Fuente(_ size: CGFloat, _ peso: Font.Weight = .regular) -> Font {
+    Font.custom("Inter", size: size).weight(peso)
+}
+
 enum Colores {
     static let verde = Color(red: 0.188, green: 0.82, blue: 0.345)
     static let rojo = Color(red: 1.0, green: 0.271, blue: 0.227)
@@ -26,12 +30,14 @@ enum Colores {
 struct CristalCard<Contenido: View>: View {
     var padding: CGFloat = 16
     var radius: CGFloat = 24
+    var paddingHorizontal: CGFloat? = nil
     @ViewBuilder var contenido: () -> Contenido
 
     var body: some View {
         contenido()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(padding)
+            .padding(.horizontal, paddingHorizontal ?? padding)
+            .padding(.vertical, padding)
             .background(Colores.cardBg.opacity(0.55))
             .overlay(alignment: .topLeading) {
                 LinearGradient(
@@ -78,7 +84,7 @@ struct CampoWayne: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(titulo)
-                .font(.system(size: 11, weight: .medium))
+                .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             Group {
                 if isSecure {
@@ -90,7 +96,7 @@ struct CampoWayne: View {
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(tipoTeclado)
-            .font(.system(size: 16))
+            .font(Fuente(16))
             .padding(.horizontal, 16)
             .frame(height: 48)
             .background(Colores.campoBg)
@@ -112,7 +118,7 @@ struct SelectorWayne: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(titulo)
-                .font(.system(size: 11, weight: .medium))
+                .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             Menu {
                 ForEach(opciones, id: \.self) { op in
@@ -121,11 +127,11 @@ struct SelectorWayne: View {
             } label: {
                 HStack {
                     Text(seleccion)
-                        .font(.system(size: 16))
+                        .font(Fuente(16))
                         .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(Fuente(11, .semibold))
                         .foregroundColor(.white.opacity(0.5))
                 }
                 .padding(.horizontal, 16)
@@ -154,7 +160,7 @@ struct BtnWayne: View {
     var body: some View {
         Button(action: accion) {
             Text(texto)
-                .font(.system(size: pequeno ? 11 : 13, weight: .semibold))
+                .font(Fuente(pequeno ? 11 : 13, .semibold))
                 .textCase(.uppercase)
                 .kerning(pequeno ? 1.5 : 2)
                 .frame(maxWidth: .infinity)
@@ -178,7 +184,7 @@ struct BtnGhost: View {
     var body: some View {
         Button(action: accion) {
             Text(texto)
-                .font(.system(size: 13, weight: .medium))
+                .font(Fuente(13, .medium))
                 .foregroundColor(.white)
                 .frame(height: 44)
                 .padding(.horizontal, 18)
@@ -213,9 +219,9 @@ struct AlertaWayne: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: exito ? "checkmark.circle.fill" : "xmark.octagon.fill")
-                .font(.system(size: 14))
+                .font(Fuente(14))
             Text(mensaje)
-                .font(.system(size: 13))
+                .font(Fuente(13))
         }
         .foregroundColor(exito ? Colores.verde : Colores.rojo)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -236,7 +242,7 @@ struct EtiquetaTitulo: View {
 
     var body: some View {
         Text(texto)
-            .font(.system(size: 20, weight: .bold))
+            .font(Fuente(20, .bold))
             .kerning(-0.5)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -248,7 +254,7 @@ struct HTitle: View {
 
     var body: some View {
         Text(texto)
-            .font(.system(size: 13, weight: .semibold))
+            .font(Fuente(13, .semibold))
             .kerning(0.3)
             .textCase(.uppercase)
             .foregroundColor(Color.white.opacity(0.28))

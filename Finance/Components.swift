@@ -62,11 +62,11 @@ struct DoughnutChart: View {
                             .fill(slice.color)
                             .frame(width: 5, height: 5)
                         Text(slice.nombre)
-                            .font(.system(size: 10))
+                            .font(Fuente(10))
                             .foregroundColor(.white.opacity(0.45))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Text(formatoMonto(slice.valor))
-                            .font(.system(size: 10))
+                            .font(Fuente(10))
                             .foregroundColor(.white.opacity(0.45))
                     }
                 }
@@ -87,9 +87,9 @@ struct ToastWayne: View {
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: icono)
-                .font(.system(size: 15))
+                .font(Fuente(15))
             Text(mensaje)
-                .font(.system(size: 13, weight: .medium))
+                .font(Fuente(13, .medium))
                 .lineLimit(2)
         }
         .foregroundColor(.white)

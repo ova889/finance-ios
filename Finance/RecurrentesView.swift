@@ -30,7 +30,7 @@ struct RecurrentesView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(Fuente(15, .semibold))
                         .foregroundColor(.white)
                         .frame(width: 34, height: 34)
                         .background(Color.white.opacity(0.06))
@@ -38,7 +38,7 @@ struct RecurrentesView: View {
                 }
                 Spacer()
                 Text("Recurring")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(Fuente(20, .bold))
                     .kerning(-0.5)
                     .foregroundColor(.white)
                 Spacer()
@@ -70,7 +70,7 @@ struct RecurrentesView: View {
 
                     if delUsuario.isEmpty {
                         Text("No recurring transactions set.")
-                            .font(.system(size: 13))
+                            .font(Fuente(13))
                             .foregroundColor(Colores.textoSec)
                             .padding(.top, 30)
                     } else {
@@ -79,26 +79,26 @@ struct RecurrentesView: View {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(r.descripcion.isEmpty ? r.categoria : r.descripcion)
-                                            .font(.system(size: 15, weight: .medium))
+                                            .font(Fuente(15, .medium))
                                             .foregroundColor(.white)
                                         HStack(spacing: 4) {
                                             Text("\(r.categoria) · Day \(r.dia) ·")
-                                                .font(.system(size: 11))
+                                                .font(Fuente(11))
                                                 .foregroundColor(Colores.textoSec)
                                             Text(formatoConSigno(r.monto, esIngreso: r.esIngreso))
-                                                .font(.system(size: 11, weight: .semibold))
+                                                .font(Fuente(11, .semibold))
                                                 .foregroundColor(r.esIngreso ? Colores.verde : Colores.rojo)
                                         }
                                     }
                                     Spacer()
                                     Button {
-                                        eliminar(r)
+                                        pendienteEliminar = r
                                     } label: {
-                                        Image(systemName: "trash")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(Colores.rojo)
+                                        IconoBasura()
+                                            .stroke(.white.opacity(0.28), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                                            .frame(width: 16, height: 16)
                                             .frame(width: 30, height: 30)
-                                            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(Colores.rojo.opacity(0.15), lineWidth: 1))
+                                            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(Color.white.opacity(0.03), lineWidth: 1))
                                     }
                                 }
                                 .padding(14)
@@ -117,16 +117,31 @@ struct RecurrentesView: View {
         }
         .background(Fondo.gradiente.ignoresSafeArea())
         .preferredColorScheme(.dark)
+        .alert("Delete recurring?", isPresented: Binding(get: { pendienteEliminar != nil }, set: { if !$0 { pendienteEliminar = nil } })) {
+            Button("Delete", role: .destructive) {
+                if let r = pendienteEliminar {
+                    eliminar(r)
+                }
+                pendienteEliminar = nil
+            }
+            Button("Cancel", role: .cancel) { pendienteEliminar = nil }
+        } message: {
+            if let r = pendienteEliminar {
+                Text("This will permanently delete the recurring \"\(r.descripcion.isEmpty ? r.categoria : r.descripcion)\". This action cannot be undone.")
+            }
+        }
     }
+
+    @State private var pendienteEliminar: Recurrente?
 
     private var campoMonto: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Amount")
-                .font(.system(size: 11, weight: .medium))
+                .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             TextField("0.00", text: $montoTexto)
                 .keyboardType(.decimalPad)
-                .font(.system(size: 14))
+                .font(Fuente(14))
                 .padding(.horizontal, 12)
                 .frame(height: 40)
                 .background(Colores.campoBg)
@@ -138,11 +153,11 @@ struct RecurrentesView: View {
     private var campoDia: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Day")
-                .font(.system(size: 11, weight: .medium))
+                .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             Stepper(value: $dia, in: 1...31) {
                 Text("\(dia)")
-                    .font(.system(size: 14))
+                    .font(Fuente(14))
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 10)
@@ -156,7 +171,7 @@ struct RecurrentesView: View {
     private var campoTipo: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Type")
-                .font(.system(size: 11, weight: .medium))
+                .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             Menu {
                 Button("Expense") { tipo = "gasto"; categoria = Categorias.gasto[0] }
@@ -164,11 +179,11 @@ struct RecurrentesView: View {
             } label: {
                 HStack {
                     Text(tipo == "gasto" ? "Expense" : "Income")
-                        .font(.system(size: 13))
+                        .font(Fuente(13))
                         .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 9))
+                        .font(Fuente(9))
                         .foregroundColor(.white.opacity(0.5))
                 }
                 .padding(.horizontal, 12)
@@ -183,7 +198,7 @@ struct RecurrentesView: View {
     private var campoCategoria: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Category")
-                .font(.system(size: 11, weight: .medium))
+                .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             Menu {
                 ForEach(Categorias.lista(para: tipo), id: \.self) { cat in
@@ -192,11 +207,11 @@ struct RecurrentesView: View {
             } label: {
                 HStack {
                     Text(categoria)
-                        .font(.system(size: 13))
+                        .font(Fuente(13))
                         .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 9))
+                        .font(Fuente(9))
                         .foregroundColor(.white.opacity(0.5))
                 }
                 .padding(.horizontal, 12)
@@ -211,10 +226,10 @@ struct RecurrentesView: View {
     private var campoDescripcion: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Description")
-                .font(.system(size: 11, weight: .medium))
+                .font(Fuente(11, .medium))
                 .foregroundColor(Colores.textoSec)
             TextField("Netflix", text: $descripcion)
-                .font(.system(size: 14))
+                .font(Fuente(14))
                 .padding(.horizontal, 12)
                 .frame(height: 40)
                 .background(Colores.campoBg)

@@ -21,10 +21,10 @@ struct ConfiguracionView: View {
 
                 VStack(spacing: 4) {
                     Text("Finance v2.0")
-                        .font(.system(size: 12))
+                        .font(Fuente(12))
                         .foregroundColor(Colores.textoSec)
                     Text("100% Native · Offline-ready")
-                        .font(.system(size: 11))
+                        .font(Fuente(11))
                         .foregroundColor(Colores.textoSec.opacity(0.6))
                 }
                 .padding(.top, 10)
@@ -62,10 +62,10 @@ struct ConfiguracionView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Privacy Mode")
-                        .font(.system(size: 15, weight: .medium))
+                        .font(Fuente(15, .medium))
                         .foregroundColor(.white)
                     Text("Blurs all amounts on screen")
-                        .font(.system(size: 11))
+                        .font(Fuente(11))
                         .foregroundColor(Colores.textoSec)
                 }
                 Spacer()
@@ -75,7 +75,7 @@ struct ConfiguracionView: View {
                     }
                 } label: {
                     Image(systemName: privacyMode ? "eye.slash" : "eye")
-                        .font(.system(size: 16))
+                        .font(Fuente(16))
                         .foregroundColor(privacyMode ? .white : .white.opacity(0.3))
                         .frame(width: 44, height: 44)
                         .background(Color.white.opacity(privacyMode ? 0.1 : 0.03))
@@ -91,10 +91,10 @@ struct ConfiguracionView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Pending Operations")
-                        .font(.system(size: 15, weight: .medium))
+                        .font(Fuente(15, .medium))
                         .foregroundColor(.white)
                     Text(textoPendientes)
-                        .font(.system(size: 11))
+                        .font(Fuente(11))
                         .foregroundColor(Colores.textoSec)
                 }
                 Spacer()
@@ -103,9 +103,9 @@ struct ConfiguracionView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(Fuente(11, .semibold))
                         Text("Sync Now")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(Fuente(11, .semibold))
                             .kerning(1.5)
                     }
                     .foregroundColor(.white)
@@ -133,28 +133,24 @@ struct ConfiguracionView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Clear All Data")
-                        .font(.system(size: 15, weight: .medium))
+                        .font(Fuente(15, .medium))
                         .foregroundColor(.white)
                     Text("Deletes all transactions and budgets")
-                        .font(.system(size: 11))
+                        .font(Fuente(11))
                         .foregroundColor(Colores.textoSec)
                 }
                 Spacer()
                 Button {
                     confirmarLimpiar()
                 } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 12))
-                        Text("Clear")
-                            .font(.system(size: 11, weight: .semibold))
-                            .kerning(1.5)
-                    }
-                    .foregroundColor(Colores.rojo)
-                    .padding(.horizontal, 14)
-                    .frame(height: 40)
-                    .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Colores.rojo.opacity(0.3), lineWidth: 1))
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    Text("Clear")
+                        .font(Fuente(11, .semibold))
+                        .kerning(1.5)
+                        .foregroundColor(Colores.rojo)
+                        .padding(.horizontal, 16)
+                        .frame(height: 40)
+                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Colores.rojo.opacity(0.3), lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
             }
         }

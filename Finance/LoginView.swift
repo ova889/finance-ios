@@ -53,7 +53,7 @@ struct LoginView: View {
                                         .padding(.bottom, 6)
 
                                     Text("FINANCE")
-                                        .font(.system(size: 20, weight: .bold))
+                                        .font(Fuente(20, .bold))
                                         .kerning(3)
                                         .foregroundColor(.white)
 
@@ -93,7 +93,7 @@ struct LoginView: View {
                                     exito = nil
                                 } }) {
                                     Text(modoRegistro ? "← Back to login" : "Create your own account")
-                                        .font(.system(size: 12, weight: .medium))
+                                        .font(Fuente(12, .medium))
                                         .foregroundColor(Colores.textoSec)
                                         .padding(.top, 18)
                                 }

@@ -6,15 +6,6 @@ enum TabPrincipal: String, CaseIterable {
     case historial = "History"
     case registro = "Add"
     case configuracion = "Settings"
-
-    var icono: String {
-        switch self {
-        case .dashboard: return "square.grid.2x2"
-        case .historial: return "clock"
-        case .registro: return "plus"
-        case .configuracion: return "gearshape"
-        }
-    }
 }
 
 struct MainView: View {
@@ -69,11 +60,11 @@ struct MainView: View {
                 activarPanico()
             } label: {
                 HStack(spacing: 6) {
-                    BatSymbol()
-                        .fill(Color.white.opacity(0.5))
-                        .frame(width: 16, height: 9.6)
+                    IconoW()
+                        .frame(width: 16, height: 16)
+                        .opacity(0.5)
                     Text("FINANCE")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(Fuente(12, .semibold))
                         .kerning(1.5)
                         .foregroundColor(.white.opacity(0.45))
                 }
@@ -82,7 +73,7 @@ struct MainView: View {
             Spacer()
 
             Text(formatoMonto(balance))
-                .font(.system(size: 12, weight: .bold))
+                .font(Fuente(12, .bold))
                 .kerning(-0.3)
                 .foregroundColor(.white)
                 .monospacedDigit()
@@ -100,7 +91,7 @@ struct MainView: View {
 
             Button(action: { session.cerrarSesion() }) {
                 Text("Sign Out")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(Fuente(10, .medium))
                     .kerning(0.3)
                     .foregroundColor(Colores.rojo)
                     .padding(.horizontal, 10)
@@ -129,13 +120,20 @@ struct MainView: View {
                         tab = item
                     }
                 } label: {
-                    Image(systemName: item.icono)
-                        .font(.system(size: item == .registro ? 22 : 21, weight: item == .registro ? .heavy : .regular))
-                        .frame(width: 38, height: 38)
-                        .foregroundColor(tab == item ? .white : .white.opacity(0.25))
-                        .background(tab == item ? Color.white.opacity(0.08) : .clear)
-                        .clipShape(Circle())
-                        .scaleEffect(tab == item ? 1.0 : 0.96)
+                    Group {
+                        switch item {
+                        case .dashboard: IconoGrid()
+                        case .historial: IconoReloj()
+                        case .registro: IconoMas()
+                        case .configuracion: IconoEngranaje()
+                        }
+                    }
+                    .stroke(tab == item ? .white : .white.opacity(0.25), style: StrokeStyle(lineWidth: item == .registro ? 2.5 : 1.5, lineCap: .round, lineJoin: .round))
+                    .frame(width: 22, height: 22)
+                    .frame(width: 38, height: 38)
+                    .background(tab == item ? Color.white.opacity(0.08) : .clear)
+                    .clipShape(Circle())
+                    .scaleEffect(tab == item ? 1.0 : 0.96)
                 }
             }
         }

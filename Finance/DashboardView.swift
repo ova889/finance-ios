@@ -16,6 +16,7 @@ struct DashboardView: View {
     @State private var nuevaCategoria = Categorias.gasto[0]
     @State private var nuevoLimite = ""
     @State private var cargado = false
+    @State private var presupuestoAEliminar: Presupuesto?
 
     init(userId: String) {
         self.userId = userId
@@ -142,6 +143,17 @@ struct DashboardView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .alert("Delete budget for \(presupuestoAEliminar?.categoria ?? "")?", isPresented: Binding(get: { presupuestoAEliminar != nil }, set: { if !$0 { presupuestoAEliminar = nil } })) {
+            Button("Delete", role: .destructive) {
+                if let p = presupuestoAEliminar {
+                    eliminarPresupuesto(p)
+                }
+                presupuestoAEliminar = nil
+            }
+            Button("Cancel", role: .cancel) { presupuestoAEliminar = nil }
+        } message: {
+            Text("This budget and its tracking will be removed. This action cannot be undone.")
+        }
     }
 
     private var cabecera: some View {
@@ -157,10 +169,10 @@ struct DashboardView: View {
             } label: {
                 HStack(spacing: 6) {
                     Text(mesSeleccionado)
-                        .font(.system(size: 11))
+                        .font(Fuente(11))
                         .foregroundColor(.white.opacity(0.6))
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(Fuente(9, .semibold))
                         .foregroundColor(.white.opacity(0.5))
                 }
                 .padding(.horizontal, 10)
@@ -173,13 +185,13 @@ struct DashboardView: View {
             let resumen = resumenMes
             HStack(spacing: 8) {
                 Text("+\(formatoMonto(resumen.inc))")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(Fuente(10, .semibold))
                     .foregroundColor(Colores.verde)
                 Text("-\(formatoMonto(resumen.exp))")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(Fuente(10, .semibold))
                     .foregroundColor(Colores.rojo)
                 Text(formatoMonto(resumen.bal))
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(Fuente(10, .semibold))
                     .foregroundColor(resumen.bal >= 0 ? Colores.verde : Colores.rojo)
             }
         }
@@ -199,7 +211,7 @@ struct DashboardView: View {
                 HTitle(texto: "Expenses by Category")
                 if gastosPorCategoria.isEmpty {
                     Text("No expenses recorded yet.")
-                        .font(.system(size: 13))
+                        .font(Fuente(13))
                         .foregroundColor(Colores.textoSec)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.vertical, 60)
@@ -227,22 +239,22 @@ struct DashboardView: View {
                 HTitle(texto: "Recent Transactions")
                 if ultimos.isEmpty {
                     Text("No transactions yet. Go to \"Add\" to get started.")
-                        .font(.system(size: 13))
+                        .font(Fuente(13))
                         .foregroundColor(Colores.textoSec)
                 } else {
                     VStack(spacing: 0) {
                         ForEach(ultimos, id: \.id) { m in
                             HStack(spacing: 8) {
                                 Text(m.fecha)
-                                    .font(.system(size: 13))
+                                    .font(Fuente(13))
                                     .foregroundColor(.white)
                                 Spacer()
                                 Text(m.categoria)
-                                    .font(.system(size: 13))
+                                    .font(Fuente(13))
                                     .foregroundColor(.white)
                                 Spacer()
                                 MontoPrivado(texto: formatoConSigno(m.monto, esIngreso: m.esIngreso))
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Fuente(14, .semibold))
                                     .foregroundColor(m.esIngreso ? Colores.verde : Colores.rojo)
                             }
                             .padding(.vertical, 8)
@@ -265,7 +277,7 @@ struct DashboardView: View {
 
                 if budgets.isEmpty {
                     Text("No budgets set yet.")
-                        .font(.system(size: 12))
+                        .font(Fuente(12))
                         .foregroundColor(Colores.textoSec)
                 }
 
@@ -278,19 +290,19 @@ struct DashboardView: View {
                         HStack {
                             HStack(spacing: 6) {
                                 Text(p.categoria)
-                                    .font(.system(size: 12))
+                                    .font(Fuente(12))
                                     .foregroundColor(.white)
                                 Button {
-                                    eliminarPresupuesto(p)
+                                    presupuestoAEliminar = p
                                 } label: {
                                     Image(systemName: "xmark")
-                                        .font(.system(size: 10))
+                                        .font(Fuente(10))
                                         .foregroundColor(Colores.rojo.opacity(0.4))
                                 }
                             }
                             Spacer()
                             Text("\(formatoMonto(gastado)) / \(formatoMonto(p.limite))")
-                                .font(.system(size: 12))
+                                .font(Fuente(12))
                                 .foregroundColor(excedido ? Colores.rojo : Colores.textoSec)
                                 .fontWeight(excedido ? .semibold : .regular)
                         }
@@ -305,7 +317,7 @@ struct DashboardView: View {
                         .frame(height: 4)
                         if excedido {
                             Text("Exceeded this budget.")
-                                .font(.system(size: 11))
+                                .font(Fuente(11))
                                 .foregroundColor(Colores.rojo)
                         }
                     }
@@ -315,7 +327,7 @@ struct DashboardView: View {
                 HStack(alignment: .bottom, spacing: 8) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Category")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
                         Menu {
                             ForEach(Categorias.gasto, id: \.self) { cat in
@@ -324,11 +336,11 @@ struct DashboardView: View {
                         } label: {
                             HStack {
                                 Text(nuevaCategoria)
-                                    .font(.system(size: 13))
+                                    .font(Fuente(13))
                                     .foregroundColor(.white)
                                 Spacer()
                                 Image(systemName: "chevron.down")
-                                    .font(.system(size: 9))
+                                    .font(Fuente(9))
                                     .foregroundColor(.white.opacity(0.5))
                             }
                             .padding(.horizontal, 12)
@@ -342,11 +354,11 @@ struct DashboardView: View {
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Limit ($)")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
                         TextField("200.00", text: $nuevoLimite)
                             .keyboardType(.decimalPad)
-                            .font(.system(size: 13))
+                            .font(Fuente(13))
                             .padding(.horizontal, 12)
                             .frame(height: 40)
                             .background(Colores.campoBg)
@@ -359,8 +371,9 @@ struct DashboardView: View {
                         guardarPresupuesto()
                     } label: {
                         Text("Set Budget")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(Fuente(11, .semibold))
                             .kerning(1.5)
+                            .textCase(.uppercase)
                             .foregroundColor(.white)
                             .frame(height: 40)
                             .frame(maxWidth: .infinity)
@@ -380,7 +393,7 @@ struct DashboardView: View {
                 HTitle(texto: "Monthly Trends")
                 if tendencias.isEmpty {
                     Text("No data yet.")
-                        .font(.system(size: 12))
+                        .font(Fuente(12))
                         .foregroundColor(Colores.textoSec)
                         .frame(maxWidth: .infinity)
                         .frame(height: 180)
@@ -408,7 +421,7 @@ struct DashboardView: View {
                     .chartXAxis {
                         AxisMarks { _ in
                             AxisValueLabel()
-                                .font(.system(size: 9))
+                                .font(Fuente(9))
                                 .foregroundStyle(Color.white.opacity(0.2))
                         }
                     }
@@ -418,7 +431,7 @@ struct DashboardView: View {
                             AxisValueLabel {
                                 if let monto = value.as(Double.self) {
                                     Text("$\(Int(monto))")
-                                        .font(.system(size: 9))
+                                        .font(Fuente(9))
                                         .foregroundStyle(Color.white.opacity(0.2))
                                 }
                             }
@@ -438,7 +451,7 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HTitle(texto: "Recurring")
                     Text("Manage auto-transactions →")
-                        .font(.system(size: 12))
+                        .font(Fuente(12))
                         .foregroundColor(Colores.textoSec)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -485,15 +498,15 @@ struct TarjetaResumen: View {
     let color: Color
 
     var body: some View {
-        CristalCard(padding: 10, radius: 14) {
+        CristalCard(padding: 10, radius: 14, paddingHorizontal: 6) {
             VStack(spacing: 4) {
                 Text(etiqueta)
-                    .font(.system(size: 8, weight: .medium))
+                    .font(Fuente(8, .medium))
                     .kerning(0.5)
                     .textCase(.uppercase)
                     .foregroundColor(Color.white.opacity(0.28))
                 MontoPrivado(texto: monto)
-                    .font(.system(size: 15, weight: .bold))
+                    .font(Fuente(15, .bold))
                     .kerning(-0.5)
                     .monospacedDigit()
                     .foregroundColor(color)

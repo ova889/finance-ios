@@ -51,7 +51,7 @@ struct LandingView: View {
                         .animation(flotando ? .easeInOut(duration: 5).repeatForever(autoreverses: true) : .default, value: flotando)
 
                     Text("FINANCE")
-                        .font(.system(size: 40, weight: .heavy, design: .default))
+                        .font(Fuente(40, .heavy))
                         .kerning(-1)
                         .lineSpacing(0)
                         .foregroundStyle(
@@ -91,7 +91,7 @@ struct LandingView: View {
                         .animation(.easeOut(duration: 0.7).delay(0.6), value: cargado)
 
                     Text("PWA · Finance v2.0")
-                        .font(.system(size: 10))
+                        .font(Fuente(10))
                         .kerning(2)
                         .foregroundColor(.white.opacity(0.06))
                         .padding(.top, 40)
@@ -117,9 +117,9 @@ struct LandingView: View {
                 .fill(Color.white.opacity(0.03))
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(Color.white.opacity(0.04), lineWidth: 1)
-            BatSymbol()
-                .fill(Color.white.opacity(0.7))
-                .frame(width: 28, height: 16.8)
+            IconoW()
+                .frame(width: 28, height: 28)
+                .opacity(0.7)
         }
         .frame(width: 60, height: 60)
         .offset(y: flotando ? -5 : 0)
@@ -127,7 +127,7 @@ struct LandingView: View {
 
     private var subTitulo: some View {
         Text("$ Track every dollar.\nOffline by default. Privacy first.")
-            .font(.system(size: 14))
+            .font(Fuente(14))
             .multilineTextAlignment(.center)
             .foregroundColor(.white.opacity(0.3))
     }
@@ -160,7 +160,7 @@ struct LandingView: View {
                 .kerning(-0.5)
                 .foregroundColor(color)
             Text(etiqueta)
-                .font(.system(size: 10, weight: .semibold))
+                .font(Fuente(10, .semibold))
                 .kerning(1)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.15))
@@ -192,17 +192,17 @@ struct LandingView: View {
     private func tarjetaCaracteristica(icono: String, titulo: String, desc: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icono)
-                .font(.system(size: 17))
+                .font(Fuente(17))
                 .foregroundColor(.white.opacity(0.2))
                 .frame(width: 24, height: 24)
             VStack(alignment: .leading, spacing: 3) {
                 Text(titulo)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(Fuente(11, .semibold))
                     .kerning(1)
                     .textCase(.uppercase)
                     .foregroundColor(.white.opacity(0.3))
                 Text(desc)
-                    .font(.system(size: 11))
+                    .font(Fuente(11))
                     .foregroundColor(.white.opacity(0.15))
             }
             Spacer(minLength: 0)
@@ -220,9 +220,9 @@ struct LandingView: View {
         Button(action: alIniciar) {
             HStack(spacing: 10) {
                 Text("Launch App")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Fuente(16, .semibold))
                 Image(systemName: "arrow.right")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(Fuente(13, .bold))
             }
             .foregroundColor(.black)
             .padding(.horizontal, 36)

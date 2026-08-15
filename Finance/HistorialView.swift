@@ -7,7 +7,7 @@ struct HistorialView: View {
 
     @Query private var movimientos: [Movimiento]
 
-    @State private var filtrarFechas = false
+    @State private var fechasActivas = false
     @State private var desde = Date()
     @State private var hasta = Date()
     @State private var tipoFiltro = ""
@@ -27,8 +27,8 @@ struct HistorialView: View {
     private var filtrados: [Movimiento] {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
-        let desdeStr = filtrarFechas ? f.string(from: desde) : ""
-        let hastaStr = filtrarFechas ? f.string(from: hasta) : ""
+        let desdeStr = fechasActivas ? f.string(from: desde) : ""
+        let hastaStr = fechasActivas ? f.string(from: hasta) : ""
 
         return delUsuario
             .filter { m in
@@ -90,6 +90,19 @@ struct HistorialView: View {
             ShareSheet(items: [resultado.url])
                 .presentationDetents([.medium])
         }
+        .alert("Delete transaction?", isPresented: Binding(get: { pendienteEliminar != nil }, set: { if !$0 { pendienteEliminar = nil } })) {
+            Button("Delete", role: .destructive) {
+                if let m = pendienteEliminar {
+                    eliminar(m)
+                }
+                pendienteEliminar = nil
+            }
+            Button("Cancel", role: .cancel) { pendienteEliminar = nil }
+        } message: {
+            if let m = pendienteEliminar {
+                Text("This will permanently delete \"\(m.descripcion)\" (\(String(format: "$%.2f", m.monto))). This action cannot be undone.")
+            }
+        }
     }
 
     private var cabecera: some View {
@@ -106,15 +119,11 @@ struct HistorialView: View {
     private var filtros: some View {
         CristalCard(padding: 16) {
             VStack(alignment: .leading, spacing: 10) {
-                Toggle(isOn: $filtrarFechas) {
-                    Text("Filter by date range")
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.7))
-                }
-                .tint(Colores.accent)
-
-                if filtrarFechas {
-                    HStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("From")
+                            .font(Fuente(11, .medium))
+                            .foregroundColor(Colores.textoSec)
                         DatePicker("From", selection: $desde, displayedComponents: .date)
                             .datePickerStyle(.compact)
                             .labelsHidden()
@@ -124,7 +133,13 @@ struct HistorialView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
                             .tint(Colores.accent)
+                            .onChange(of: desde) { _, _ in fechasActivas = true }
+                    }
 
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("To")
+                            .font(Fuente(11, .medium))
+                            .foregroundColor(Colores.textoSec)
                         DatePicker("To", selection: $hasta, displayedComponents: .date)
                             .datePickerStyle(.compact)
                             .labelsHidden()
@@ -134,6 +149,7 @@ struct HistorialView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
                             .tint(Colores.accent)
+                            .onChange(of: hasta) { _, _ in fechasActivas = true }
                     }
                 }
 
@@ -145,11 +161,11 @@ struct HistorialView: View {
                     } label: {
                         HStack {
                             Text(tipoFiltro.isEmpty ? "All" : (tipoFiltro == "ingreso" ? "Income" : "Expense"))
-                                .font(.system(size: 13))
+                                .font(Fuente(13))
                                 .foregroundColor(.white)
                             Spacer()
                             Image(systemName: "chevron.down")
-                                .font(.system(size: 9))
+                                .font(Fuente(9))
                                 .foregroundColor(.white.opacity(0.5))
                         }
                         .padding(.horizontal, 12)
@@ -176,11 +192,11 @@ struct HistorialView: View {
             CristalCard(padding: 12) {
                 VStack(spacing: 2) {
                     Text("Income")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Fuente(10, .medium))
                         .textCase(.uppercase)
                         .foregroundColor(Color.white.opacity(0.28))
                     MontoPrivado(texto: formatoMonto(totalIngresos))
-                        .font(.system(size: 17, weight: .bold))
+                        .font(Fuente(17, .bold))
                         .monospacedDigit()
                         .foregroundColor(Colores.verde)
                         .frame(maxWidth: .infinity)
@@ -189,11 +205,11 @@ struct HistorialView: View {
             CristalCard(padding: 12) {
                 VStack(spacing: 2) {
                     Text("Expenses")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Fuente(10, .medium))
                         .textCase(.uppercase)
                         .foregroundColor(Color.white.opacity(0.28))
                     MontoPrivado(texto: formatoMonto(totalGastos))
-                        .font(.system(size: 17, weight: .bold))
+                        .font(Fuente(17, .bold))
                         .monospacedDigit()
                         .foregroundColor(Colores.rojo)
                         .frame(maxWidth: .infinity)
@@ -205,10 +221,10 @@ struct HistorialView: View {
     private var buscador: some View {
         HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 14))
+                .font(Fuente(14))
                 .foregroundColor(.white.opacity(0.3))
             TextField("Search transactions...", text: $busqueda)
-                .font(.system(size: 14))
+                .font(Fuente(14))
                 .foregroundColor(.white)
         }
         .padding(.horizontal, 16)
@@ -223,7 +239,7 @@ struct HistorialView: View {
             if filtrados.isEmpty {
                 CristalCard(padding: 24) {
                     Text("No transactions found for these filters.")
-                        .font(.system(size: 13))
+                        .font(Fuente(13))
                         .foregroundColor(Colores.textoSec)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
@@ -231,7 +247,7 @@ struct HistorialView: View {
                 ForEach(agrupados, id: \.fecha) { grupo in
                     VStack(alignment: .leading, spacing: 8) {
                         Text(fechaLegible(grupo.fecha))
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(Fuente(12, .semibold))
                             .kerning(0.5)
                             .textCase(.uppercase)
                             .foregroundColor(Color.white.opacity(0.2))
@@ -251,16 +267,16 @@ struct HistorialView: View {
         let contenido = HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(m.descripcion.isEmpty ? m.categoria : m.descripcion)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(Fuente(15, .medium))
                     .foregroundColor(.white)
                     .lineLimit(1)
                 Text(m.categoria)
-                    .font(.system(size: 11))
+                    .font(Fuente(11))
                     .foregroundColor(Colores.textoSec)
             }
             Spacer()
             MontoPrivado(texto: formatoConSigno(m.monto, esIngreso: m.esIngreso))
-                .font(.system(size: 18, weight: .bold))
+                .font(Fuente(18, .bold))
                 .kerning(-0.5)
                 .monospacedDigit()
                 .foregroundColor(m.esIngreso ? Colores.verde : Colores.rojo)
@@ -285,12 +301,14 @@ struct HistorialView: View {
         }
 
         return SwipeEliminar {
-            eliminar(m)
+            pendienteEliminar = m
         } contenido: {
             contenido
         }
         .padding(.vertical, 2)
     }
+
+    @State private var pendienteEliminar: Movimiento?
 
     private func eliminar(_ m: Movimiento) {
         context.delete(m)
@@ -298,7 +316,7 @@ struct HistorialView: View {
     }
 
     private func limpiarFiltros() {
-        filtrarFechas = false
+        fechasActivas = false
         tipoFiltro = ""
         busqueda = ""
         desde = Date()
@@ -330,11 +348,11 @@ struct SwipeEliminar<Contenido: View>: View {
         ZStack(alignment: .trailing) {
             Button(action: onEliminar) {
                 VStack(spacing: 3) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 17))
-                        .opacity(0.85)
+                    IconoBasura()
+                        .stroke(.white.opacity(0.85), style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round))
+                        .frame(width: 22, height: 22)
                     Text("Delete")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(Fuente(10, .semibold))
                         .kerning(0.3)
                 }
                 .foregroundColor(.white)
@@ -392,11 +410,11 @@ struct EditarMovimientoSheet: View {
         VStack(spacing: 0) {
             HStack {
                 Button("Cancel") { dismiss() }
-                    .font(.system(size: 14))
+                    .font(Fuente(14))
                     .foregroundColor(Colores.textoSec)
                 Spacer()
                 Text("Edit Transaction")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Fuente(16, .semibold))
                     .kerning(-0.3)
                 Spacer()
                 Color.clear.frame(width: 50, height: 1)
@@ -414,11 +432,11 @@ struct EditarMovimientoSheet: View {
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Amount ($)")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
                         TextField("0.00", text: $montoTexto)
                             .keyboardType(.decimalPad)
-                            .font(.system(size: 16))
+                            .font(Fuente(16))
                             .padding(.horizontal, 16)
                             .frame(height: 48)
                             .background(Colores.campoBg)
@@ -429,10 +447,10 @@ struct EditarMovimientoSheet: View {
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Description (optional)")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
                         TextField("Add a note", text: $descripcion)
-                            .font(.system(size: 16))
+                            .font(Fuente(16))
                             .padding(.horizontal, 16)
                             .frame(height: 48)
                             .background(Colores.campoBg)
@@ -443,7 +461,7 @@ struct EditarMovimientoSheet: View {
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Date")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
                         DatePicker("", selection: $fecha, displayedComponents: .date)
                             .labelsHidden()
