@@ -33,7 +33,7 @@ struct ConfiguracionView: View {
             .frame(maxWidth: 720)
             .frame(maxWidth: .infinity)
             .padding(.top, 6)
-            .padding(.bottom, 100)
+            .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
         .alert(
             "Delete ALL transactions and budgets?",
@@ -77,10 +77,10 @@ struct ConfiguracionView: View {
                     Image(systemName: privacyMode ? "eye.slash" : "eye")
                         .font(Fuente(16))
                         .foregroundColor(privacyMode ? .white : .white.opacity(0.3))
-                        .frame(width: 44, height: 44)
-                        .background(Color.white.opacity(privacyMode ? 0.1 : 0.03))
-                        .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .frame(width: DesignTokens.privacidadTamano, height: DesignTokens.privacidadTamano)
+                        .background(Color.white.opacity(privacyMode ? 0.06 : 0.03))
+                        .overlay(RoundedRectangle(cornerRadius: DesignTokens.privacidadRadio, style: .continuous).stroke(Color.white.opacity(0.06), lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.privacidadRadio, style: .continuous))
                 }
             }
         }

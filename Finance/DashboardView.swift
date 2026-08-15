@@ -124,7 +124,7 @@ struct DashboardView: View {
             .frame(maxWidth: 720)
             .frame(maxWidth: .infinity)
             .padding(.top, 6)
-            .padding(.bottom, 100)
+            .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
         .onAppear {
             cargado = true
@@ -162,25 +162,14 @@ struct DashboardView: View {
 
             Spacer()
 
-            Menu {
-                ForEach(mesesDisponibles, id: \.self) { mes in
-                    Button(mes) { mesSeleccionado = mes }
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Text(mesSeleccionado)
-                        .font(Fuente(11))
-                        .foregroundColor(.white.opacity(0.6))
-                    Image(systemName: "chevron.down")
-                        .font(Fuente(9, .semibold))
-                        .foregroundColor(.white.opacity(0.5))
-                }
-                .padding(.horizontal, 10)
-                .frame(width: 130, height: 32)
-                .background(Colores.campoBg)
-                .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            }
+            VistaDropdown(
+                opciones: mesesDisponibles,
+                seleccion: $mesSeleccionado,
+                compacto: true,
+                ancho: 130,
+                alinearDerecha: true,
+                margenInferior: 0
+            )
 
             let resumen = resumenMes
             HStack(spacing: 8) {
@@ -329,26 +318,11 @@ struct DashboardView: View {
                         Text("Category")
                             .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
-                        Menu {
-                            ForEach(Categorias.gasto, id: \.self) { cat in
-                                Button(cat) { nuevaCategoria = cat }
-                            }
-                        } label: {
-                            HStack {
-                                Text(nuevaCategoria)
-                                    .font(Fuente(13))
-                                    .foregroundColor(.white)
-                                Spacer()
-                                Image(systemName: "chevron.down")
-                                    .font(Fuente(9))
-                                    .foregroundColor(.white.opacity(0.5))
-                            }
-                            .padding(.horizontal, 12)
-                            .frame(height: 40)
-                            .background(Colores.campoBg)
-                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        }
+                        VistaDropdown(
+                            opciones: Categorias.gasto,
+                            seleccion: $nuevaCategoria,
+                            margenInferior: 0
+                        )
                     }
                     .frame(maxWidth: .infinity)
 

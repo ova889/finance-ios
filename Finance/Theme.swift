@@ -12,7 +12,15 @@ enum Fondo {
 }
 
 func Fuente(_ size: CGFloat, _ peso: Font.Weight = .regular) -> Font {
+    Font.system(size: size, weight: peso)
+}
+
+func FuenteInter(_ size: CGFloat, _ peso: Font.Weight = .regular) -> Font {
     Font.custom("Inter", size: size).weight(peso)
+}
+
+func FuenteMono(_ size: CGFloat, _ peso: Font.Weight = .regular) -> Font {
+    Font.custom("JetBrains Mono", size: size).weight(peso)
 }
 
 enum Colores {
@@ -110,41 +118,99 @@ struct CampoWayne: View {
     }
 }
 
-struct SelectorWayne: View {
-    var titulo: String
+struct VistaDropdown: View {
+    var titulo: String = ""
     var opciones: [String]
     @Binding var seleccion: String
+    var compacto: Bool = false
+    var ancho: CGFloat? = nil
+    var alinearDerecha: Bool = false
+    var margenInferior: CGFloat = 18
+
+    @State private var abierto = false
+
+    private var altura: CGFloat { compacto ? 32 : DesignTokens.campoAltura }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(titulo)
-                .font(Fuente(11, .medium))
-                .foregroundColor(Colores.textoSec)
-            Menu {
-                ForEach(opciones, id: \.self) { op in
-                    Button(op) { seleccion = op }
-                }
+            if !titulo.isEmpty {
+                Text(titulo)
+                    .font(Fuente(11, .medium))
+                    .foregroundColor(Colores.textoSec)
+            }
+            Button {
+                abierto.toggle()
             } label: {
-                HStack {
+                HStack(spacing: 8) {
                     Text(seleccion)
-                        .font(Fuente(16))
+                        .font(Fuente(compacto ? 11 : 16))
                         .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .font(Fuente(11, .semibold))
+                        .font(Fuente(9, .semibold))
                         .foregroundColor(.white.opacity(0.5))
+                        .rotationEffect(.degrees(abierto ? 180 : 0))
                 }
-                .padding(.horizontal, 16)
-                .frame(height: 48)
+                .padding(.horizontal, compacto ? 8 : 16)
+                .frame(height: altura)
+                .frame(maxWidth: ancho ?? .infinity)
                 .background(Colores.campoBg)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous)
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
             }
-            .padding(.bottom, 18)
+            .buttonStyle(PressStyle(escala: 0.98))
+            .overlay(alignment: alinearDerecha ? .topTrailing : .topLeading) {
+                if abierto {
+                    ZStack(alignment: alinearDerecha ? .topTrailing : .topLeading) {
+                        Color.black.opacity(0.001)
+                            .ignoresSafeArea()
+                            .onTapGesture { abierto = false }
+                        panel
+                            .padding(.top, altura + 6)
+                            .transition(.opacity.combined(with: .offset(y: -8)))
+                    }
+                }
+            }
+            .padding(.bottom, margenInferior)
         }
+        .animation(.easeOut(duration: 0.15), value: abierto)
+    }
+
+    private var panel: some View {
+        VStack(spacing: 0) {
+            ForEach(opciones, id: \.self) { op in
+                Button {
+                    seleccion = op
+                    abierto = false
+                } label: {
+                    HStack(spacing: 10) {
+                        Text(op)
+                            .font(Fuente(13, op == seleccion ? .semibold : .regular))
+                            .foregroundColor(op == seleccion ? .white : .white.opacity(0.7))
+                        Spacer()
+                        if op == seleccion {
+                            Image(systemName: "checkmark")
+                                .font(Fuente(11, .semibold))
+                                .foregroundColor(.white.opacity(0.7))
+                        }
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(PressStyle(escala: 0.97))
+            }
+        }
+        .frame(width: max(ancho ?? 220, 200))
+        .padding(6)
+        .background(Color.black.opacity(0.85))
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
+        .shadow(color: .black.opacity(0.6), radius: 40, y: 12)
     }
 }
 
@@ -186,7 +252,7 @@ struct BtnGhost: View {
             Text(texto)
                 .font(Fuente(13, .medium))
                 .foregroundColor(.white)
-                .frame(height: 44)
+                .frame(height: DesignTokens.btnGhostAltura)
                 .padding(.horizontal, 18)
                 .background(Color.white.opacity(0.04))
                 .overlay(
@@ -209,6 +275,16 @@ struct ScalePressStyle: ButtonStyle {
             .onChange(of: configuration.isPressed) { _, nuevo in
                 presionado = nuevo
             }
+    }
+}
+
+struct PressStyle: ButtonStyle {
+    var escala: CGFloat = 0.96
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? escala : 1)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 
@@ -242,7 +318,7 @@ struct EtiquetaTitulo: View {
 
     var body: some View {
         Text(texto)
-            .font(Fuente(20, .bold))
+            .font(Fuente(17, .bold))
             .kerning(-0.5)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, alignment: .leading)

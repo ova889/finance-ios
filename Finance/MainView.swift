@@ -131,31 +131,38 @@ struct MainView: View {
         HStack(spacing: 6) {
             ForEach(TabPrincipal.allCases, id: \.self) { item in
                 Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        tab = item
-                    }
+                    tab = item
                 } label: {
                     iconoNavegacion(item)
-                        .frame(width: 22, height: 22)
-                        .frame(width: 38, height: 38)
+                        .frame(width: DesignTokens.navIconoTamano, height: DesignTokens.navIconoTamano)
+                        .frame(width: DesignTokens.navItemTamano, height: DesignTokens.navItemTamano)
                         .background(tab == item ? Color.white.opacity(0.08) : .clear)
                         .clipShape(Circle())
-                        .scaleEffect(tab == item ? 1.0 : 0.96)
                 }
+                .buttonStyle(PressStyle(escala: 0.9))
             }
         }
-        .padding(.horizontal, 14)
-        .frame(width: 280, height: 55)
-        .background(Color.black.opacity(0.45))
+        .padding(.horizontal, 16)
+        .frame(width: 280, height: DesignTokens.navPillAltura)
+        .background(DesignTokens.navPillFondo)
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
+        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
         .overlay(alignment: .top) {
             Capsule().fill(Color.white.opacity(0.06)).frame(height: 12).frame(maxWidth: .infinity).padding(.horizontal, 1).allowsHitTesting(false)
         }
-        .shadow(color: .black.opacity(0.4), radius: 32, y: 8)
-        .padding(.bottom, 16)
+        .shadow(color: .black.opacity(0.35), radius: 32, y: 8)
+        .scaleEffect(pillPresionado ? 0.97 : 1)
+        .animation(.easeOut(duration: 0.1), value: pillPresionado)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in pillPresionado = true }
+                .onEnded { _ in pillPresionado = false }
+        )
+        .padding(.bottom, 24)
     }
+
+    @State private var pillPresionado = false
 
     private func activarPanico() {
         tapBrand += 1

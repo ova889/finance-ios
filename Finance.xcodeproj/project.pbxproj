@@ -25,6 +25,8 @@
 		AF0000000000000000000210 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000110 /* Assets.xcassets */; };
 		AF0000000000000000000211 /* LandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000111 /* LandingView.swift */; };
 		AF0000000000000000000212 /* Iconos.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000112 /* Iconos.swift */; };
+AF0000000000000000000222 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000122 /* DesignTokens.swift */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +50,8 @@
 		AF0000000000000000000110 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AF0000000000000000000111 /* LandingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingView.swift; sourceTree = "<group>"; };
 		AF0000000000000000000112 /* Iconos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Iconos.swift; sourceTree = "<group>"; };
+AF0000000000000000000122 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +88,7 @@
 				AF0000000000000000000102 /* RootView.swift */,
 				AF0000000000000000000111 /* LandingView.swift */,
 				AF0000000000000000000112 /* Iconos.swift */,
+				AF0000000000000000000122 /* DesignTokens.swift */,
 				AF0000000000000000000103 /* Models.swift */,
 				AF0000000000000000000104 /* Auth.swift */,
 				AF0000000000000000000105 /* Theme.swift */,
@@ -176,6 +181,7 @@
 				AF0000000000000000000202 /* RootView.swift in Sources */,
 				AF0000000000000000000211 /* LandingView.swift in Sources */,
 				AF0000000000000000000212 /* Iconos.swift in Sources */,
+				AF0000000000000000000222 /* DesignTokens.swift in Sources */,
 				AF0000000000000000000203 /* Models.swift in Sources */,
 				AF0000000000000000000204 /* Auth.swift in Sources */,
 				AF0000000000000000000205 /* Theme.swift in Sources */,

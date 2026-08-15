@@ -9,6 +9,7 @@ struct RecurrentesView: View {
     @Query private var recurrentes: [Recurrente]
 
     @State private var tipo = "gasto"
+    @State private var tipoDisplay = "Expense"
     @State private var categoria = Categorias.gasto[0]
     @State private var montoTexto = ""
     @State private var descripcion = ""
@@ -143,10 +144,10 @@ struct RecurrentesView: View {
                 .keyboardType(.decimalPad)
                 .font(Fuente(14))
                 .padding(.horizontal, 12)
-                .frame(height: 40)
+                .frame(height: DesignTokens.campoAltura)
                 .background(Colores.campoBg)
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
         }
     }
 
@@ -161,66 +162,33 @@ struct RecurrentesView: View {
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 10)
-            .frame(height: 40)
+            .frame(height: DesignTokens.campoAltura)
             .background(Colores.campoBg)
-            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
         }
     }
 
     private var campoTipo: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Type")
-                .font(Fuente(11, .medium))
-                .foregroundColor(Colores.textoSec)
-            Menu {
-                Button("Expense") { tipo = "gasto"; categoria = Categorias.gasto[0] }
-                Button("Income") { tipo = "ingreso"; categoria = Categorias.ingreso[0] }
-            } label: {
-                HStack {
-                    Text(tipo == "gasto" ? "Expense" : "Income")
-                        .font(Fuente(13))
-                        .foregroundColor(.white)
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .font(Fuente(9))
-                        .foregroundColor(.white.opacity(0.5))
-                }
-                .padding(.horizontal, 12)
-                .frame(height: 40)
-                .background(Colores.campoBg)
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
+        VistaDropdown(
+            titulo: "Type",
+            opciones: ["Expense", "Income"],
+            seleccion: $tipoDisplay,
+            margenInferior: 0
+        )
+        .onChange(of: tipoDisplay) { _, nuevo in
+            tipo = nuevo == "Income" ? "ingreso" : "gasto"
+            categoria = nuevo == "Income" ? Categorias.ingreso[0] : Categorias.gasto[0]
         }
     }
 
     private var campoCategoria: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Category")
-                .font(Fuente(11, .medium))
-                .foregroundColor(Colores.textoSec)
-            Menu {
-                ForEach(Categorias.lista(para: tipo), id: \.self) { cat in
-                    Button(cat) { categoria = cat }
-                }
-            } label: {
-                HStack {
-                    Text(categoria)
-                        .font(Fuente(13))
-                        .foregroundColor(.white)
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .font(Fuente(9))
-                        .foregroundColor(.white.opacity(0.5))
-                }
-                .padding(.horizontal, 12)
-                .frame(height: 40)
-                .background(Colores.campoBg)
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
-        }
+        VistaDropdown(
+            titulo: "Category",
+            opciones: Categorias.lista(para: tipo),
+            seleccion: $categoria,
+            margenInferior: 0
+        )
     }
 
     private var campoDescripcion: some View {
@@ -231,10 +199,10 @@ struct RecurrentesView: View {
             TextField("Netflix", text: $descripcion)
                 .font(Fuente(14))
                 .padding(.horizontal, 12)
-                .frame(height: 40)
+                .frame(height: DesignTokens.campoAltura)
                 .background(Colores.campoBg)
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
         }
     }
 

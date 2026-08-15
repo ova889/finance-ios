@@ -1,0 +1,43 @@
+#barra-unica {
+    position: fixed !important;
+    bottom: 24px !important;
+    left: 50% !important;
+    top: auto !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    width: 280px !important;
+    height: 55px !important;
+    background: rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: blur(30px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+    border-radius: 50px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 14px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+}
+#barra-unica a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50px !important;
+    color: rgba(255, 255, 255, 0.25) !important;
+    text-decoration: none !important;
+}
+#barra-unica a svg {
+    width: 22px !important;
+    height: 22px !important;
+}
+#barra-unica a span {
+    display: none !important;
+}
+#barra-unica a.activo {
+    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}

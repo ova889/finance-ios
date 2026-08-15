@@ -51,7 +51,7 @@ struct LandingView: View {
                         .animation(flotando ? .easeInOut(duration: 5).repeatForever(autoreverses: true) : .default, value: flotando)
 
                     Text("FINANCE")
-                        .font(Fuente(40, .heavy))
+                        .font(FuenteInter(40, .heavy))
                         .kerning(-1)
                         .lineSpacing(0)
                         .foregroundStyle(
@@ -91,7 +91,7 @@ struct LandingView: View {
                         .animation(.easeOut(duration: 0.7).delay(0.6), value: cargado)
 
                     Text("PWA · Finance v2.0")
-                        .font(Fuente(10))
+                        .font(FuenteInter(10))
                         .kerning(2)
                         .foregroundColor(.white.opacity(0.06))
                         .padding(.top, 40)
@@ -127,7 +127,7 @@ struct LandingView: View {
 
     private var subTitulo: some View {
         Text("$ Track every dollar.\nOffline by default. Privacy first.")
-            .font(Fuente(14))
+            .font(FuenteInter(14))
             .multilineTextAlignment(.center)
             .foregroundColor(.white.opacity(0.3))
     }
@@ -156,11 +156,11 @@ struct LandingView: View {
     private func metrica(valor: String, color: Color, etiqueta: String) -> some View {
         VStack(spacing: 4) {
             Text(valor)
-                .font(.system(size: 19, weight: .semibold, design: .monospaced))
+                .font(FuenteMono(19, .semibold))
                 .kerning(-0.5)
                 .foregroundColor(color)
             Text(etiqueta)
-                .font(Fuente(10, .semibold))
+                .font(FuenteInter(10, .semibold))
                 .kerning(1)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.15))
@@ -192,17 +192,17 @@ struct LandingView: View {
     private func tarjetaCaracteristica(icono: String, titulo: String, desc: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icono)
-                .font(Fuente(17))
+                .font(FuenteInter(17))
                 .foregroundColor(.white.opacity(0.2))
                 .frame(width: 24, height: 24)
             VStack(alignment: .leading, spacing: 3) {
                 Text(titulo)
-                    .font(Fuente(11, .semibold))
+                    .font(FuenteInter(11, .semibold))
                     .kerning(1)
                     .textCase(.uppercase)
                     .foregroundColor(.white.opacity(0.3))
                 Text(desc)
-                    .font(Fuente(11))
+                    .font(FuenteInter(11))
                     .foregroundColor(.white.opacity(0.15))
             }
             Spacer(minLength: 0)
@@ -220,9 +220,9 @@ struct LandingView: View {
         Button(action: alIniciar) {
             HStack(spacing: 10) {
                 Text("Launch App")
-                    .font(Fuente(16, .semibold))
+                    .font(FuenteInter(16, .semibold))
                 Image(systemName: "arrow.right")
-                    .font(Fuente(13, .bold))
+                    .font(FuenteInter(13, .bold))
             }
             .foregroundColor(.black)
             .padding(.horizontal, 36)

@@ -54,7 +54,7 @@ struct RegistroView: View {
                         }
                         .padding(.bottom, 18)
 
-                        SelectorWayne(titulo: "Category", opciones: Categorias.lista(para: tipo), seleccion: $categoria)
+                        VistaDropdown(titulo: "Category", opciones: Categorias.lista(para: tipo), seleccion: $categoria)
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Description (optional)")
@@ -126,7 +126,7 @@ struct RegistroView: View {
             }
             .padding(.horizontal, 10)
             .padding(.top, 6)
-            .padding(.bottom, 100)
+            .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
     }
 

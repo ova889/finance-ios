@@ -10,7 +10,7 @@ struct HistorialView: View {
     @State private var fechasActivas = false
     @State private var desde = Date()
     @State private var hasta = Date()
-    @State private var tipoFiltro = ""
+    @State private var tipoFiltro = "All"
     @State private var busqueda = ""
     @State private var movimientoAEditar: Movimiento?
     @State private var archivoCompartir: ExportService.Resultado?
@@ -34,8 +34,8 @@ struct HistorialView: View {
             .filter { m in
                 if !desdeStr.isEmpty && m.fecha < desdeStr { return false }
                 if !hastaStr.isEmpty && m.fecha > hastaStr { return false }
-                if tipoFiltro == "ingreso" && !m.esIngreso { return false }
-                if tipoFiltro == "gasto" && m.esIngreso { return false }
+                if tipoFiltro == "Income" && !m.esIngreso { return false }
+                if tipoFiltro == "Expense" && m.esIngreso { return false }
                 if !busqueda.isEmpty {
                     let texto = (m.descripcion + " " + m.categoria).lowercased()
                     if !texto.contains(busqueda.lowercased()) { return false }
@@ -81,7 +81,7 @@ struct HistorialView: View {
             .frame(maxWidth: 720)
             .frame(maxWidth: .infinity)
             .padding(.top, 6)
-            .padding(.bottom, 100)
+            .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
         .sheet(item: $movimientoAEditar) { mov in
             EditarMovimientoSheet(movimiento: mov)
@@ -127,11 +127,11 @@ struct HistorialView: View {
                         DatePicker("From", selection: $desde, displayedComponents: .date)
                             .datePickerStyle(.compact)
                             .labelsHidden()
-                            .frame(height: 44)
+                            .frame(height: DesignTokens.campoAltura)
                             .padding(.horizontal, 12)
                             .background(Colores.campoBg)
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
+                            .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
                             .tint(Colores.accent)
                             .onChange(of: desde) { _, _ in fechasActivas = true }
                     }
@@ -143,37 +143,22 @@ struct HistorialView: View {
                         DatePicker("To", selection: $hasta, displayedComponents: .date)
                             .datePickerStyle(.compact)
                             .labelsHidden()
-                            .frame(height: 44)
+                            .frame(height: DesignTokens.campoAltura)
                             .padding(.horizontal, 12)
                             .background(Colores.campoBg)
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous))
+                            .overlay(RoundedRectangle(cornerRadius: DesignTokens.campoRadio, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
                             .tint(Colores.accent)
                             .onChange(of: hasta) { _, _ in fechasActivas = true }
                     }
                 }
 
                 HStack(spacing: 8) {
-                    Menu {
-                        Button("All") { tipoFiltro = "" }
-                        Button("Income") { tipoFiltro = "ingreso" }
-                        Button("Expense") { tipoFiltro = "gasto" }
-                    } label: {
-                        HStack {
-                            Text(tipoFiltro.isEmpty ? "All" : (tipoFiltro == "ingreso" ? "Income" : "Expense"))
-                                .font(Fuente(13))
-                                .foregroundColor(.white)
-                            Spacer()
-                            Image(systemName: "chevron.down")
-                                .font(Fuente(9))
-                                .foregroundColor(.white.opacity(0.5))
-                        }
-                        .padding(.horizontal, 12)
-                        .frame(height: 44)
-                        .background(Colores.campoBg)
-                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    }
+                    VistaDropdown(
+                        opciones: ["All", "Income", "Expense"],
+                        seleccion: $tipoFiltro,
+                        margenInferior: 0
+                    )
                     .frame(maxWidth: .infinity)
 
                     BtnWayne(texto: "Filter", pequeno: true) {}
@@ -317,7 +302,7 @@ struct HistorialView: View {
 
     private func limpiarFiltros() {
         fechasActivas = false
-        tipoFiltro = ""
+        tipoFiltro = "All"
         busqueda = ""
         desde = Date()
         hasta = Date()
@@ -424,7 +409,7 @@ struct EditarMovimientoSheet: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    SelectorWayne(
+                    VistaDropdown(
                         titulo: "Category",
                         opciones: Categorias.lista(para: movimiento.tipo),
                         seleccion: $categoria
