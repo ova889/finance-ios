@@ -383,7 +383,7 @@ struct EditarMovimientoSheet: View {
         _categoria = State(initialValue: movimiento.categoria)
         _montoTexto = State(initialValue: String(format: "%.2f", movimiento.monto))
         _descripcion = State(initialValue: movimiento.descripcion)
-        _fecha = State(initialValue: fechaDeString(movimiento.fecha) ?? Date())
+        _fecha = State(initialValue: Self.fechaDeString(movimiento.fecha) ?? Date())
     }
 
     var body: some View {

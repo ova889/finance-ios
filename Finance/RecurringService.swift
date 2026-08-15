@@ -8,8 +8,9 @@ enum RecurringService {
         guard usuario.ultimoCheckRecurrentes != hoy else { return [] }
 
         let hoyDia = Calendar.current.component(.day, from: Date())
+        let nombreUsuario = usuario.nombre
         let descriptor = FetchDescriptor<Recurrente>(
-            predicate: #Predicate { $0.userId == usuario.nombre && $0.activo == true && $0.dia == hoyDia }
+            predicate: #Predicate { $0.userId == nombreUsuario && $0.activo == true && $0.dia == hoyDia }
         )
         guard let items = try? context.fetch(descriptor) else {
             usuario.ultimoCheckRecurrentes = hoy
