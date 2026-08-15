@@ -97,7 +97,8 @@ struct DashboardView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView(showsIndicators: false)
+            .scrollDismissesKeyboard(.interactively) {
             VStack(spacing: 12) {
                 cabecera
                     .opacity(cargado ? 1 : 0)
@@ -108,7 +109,7 @@ struct DashboardView: View {
                     .offset(y: cargado ? 0 : 36)
                     .opacity(cargado ? 1 : 0)
                     .scaleEffect(cargado ? 1 : 0.95)
-                    .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.15), value: cargado)
+                    .animation(.easeOut(duration: 0.5).delay(0.15), value: cargado)
 
                 tarjetaCategorias
                     .entrada(retraso: 0.22, cargado: cargado)
@@ -159,7 +160,7 @@ struct DashboardView: View {
 
     private var cabecera: some View {
         HStack(alignment: .center) {
-            EtiquetaTitulo(texto: "Dashboard")
+            EtiquetaTitulo(texto: "Dashboard", tamano: 20)
 
             Spacer()
 
@@ -236,11 +237,11 @@ struct DashboardView: View {
                         ForEach(ultimos, id: \.id) { m in
                             HStack(spacing: 8) {
                                 Text(m.fecha)
-                                    .font(Fuente(13))
+                                    .font(Fuente(14))
                                     .foregroundColor(.white)
                                 Spacer()
                                 Text(m.categoria)
-                                    .font(Fuente(13))
+                                    .font(Fuente(14))
                                     .foregroundColor(.white)
                                 Spacer()
                                 MontoPrivado(texto: formatoConSigno(m.monto, esIngreso: m.esIngreso))

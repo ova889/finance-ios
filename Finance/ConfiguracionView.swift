@@ -6,24 +6,31 @@ struct ConfiguracionView: View {
     @Environment(\.modelContext) private var context
 
     @AppStorage("privacyMode") private var privacyMode = false
+    @State private var cargado = false
     @State private var alerta: AlertaConfirmacion?
     @State private var textoPendientes = "No pending operations"
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 12) {
+            VStack(spacing: 8) {
                 EtiquetaTitulo(texto: "Settings")
-                    .padding(.bottom, 4)
+                    .padding(.bottom, 8)
+                    .opacity(cargado ? 1 : 0)
+                    .offset(y: cargado ? 0 : 8)
+                    .animation(.easeOut(duration: 0.25).delay(0.05), value: cargado)
 
                 filaPrivacidad
+                    .entrada(retraso: 0.12, cargado: cargado)
                 filaPendientes
+                    .entrada(retraso: 0.19, cargado: cargado)
                 filaLimpiar
+                    .entrada(retraso: 0.26, cargado: cargado)
 
                 VStack(spacing: 4) {
                     Text("Finance v2.0")
                         .font(Fuente(12))
                         .foregroundColor(Colores.textoSec)
-                    Text("100% Native · Offline-ready")
+                    Text("PWA · Offline-ready")
                         .font(Fuente(11))
                         .foregroundColor(Colores.textoSec.opacity(0.6))
                 }
@@ -35,6 +42,7 @@ struct ConfiguracionView: View {
             .padding(.top, 6)
             .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
+        .onAppear { cargado = true }
         .alert(
             "Delete ALL transactions and budgets?",
             isPresented: Binding(
@@ -75,9 +83,9 @@ struct ConfiguracionView: View {
                     }
                 } label: {
                     Image(systemName: privacyMode ? "eye.slash" : "eye")
-                        .font(Fuente(16))
+                        .font(Fuente(18))
                         .foregroundColor(privacyMode ? .white : .white.opacity(0.3))
-                        .frame(width: DesignTokens.privacidadTamano, height: DesignTokens.privacidadTamano)
+                        .frame(width: 44, height: 44)
                         .background(Color.white.opacity(privacyMode ? 0.06 : 0.03))
                         .overlay(RoundedRectangle(cornerRadius: DesignTokens.privacidadRadio, style: .continuous).stroke(Color.white.opacity(0.06), lineWidth: 1))
                         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.privacidadRadio, style: .continuous))
@@ -109,10 +117,10 @@ struct ConfiguracionView: View {
                             .kerning(1.5)
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 14)
+                    .padding(.horizontal, 16)
                     .frame(height: 40)
-                    .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.white.opacity(0.2), lineWidth: 1))
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.2), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
             }
         }
@@ -143,14 +151,18 @@ struct ConfiguracionView: View {
                 Button {
                     confirmarLimpiar()
                 } label: {
-                    Text("Clear")
-                        .font(Fuente(11, .semibold))
-                        .kerning(1.5)
-                        .foregroundColor(Colores.rojo)
-                        .padding(.horizontal, 16)
-                        .frame(height: 40)
-                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Colores.rojo.opacity(0.3), lineWidth: 1))
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    HStack(spacing: 6) {
+                        Image(systemName: "trash")
+                            .font(Fuente(11, .semibold))
+                        Text("Clear")
+                            .font(Fuente(11, .semibold))
+                            .kerning(1.5)
+                    }
+                    .foregroundColor(Colores.rojo)
+                    .padding(.horizontal, 16)
+                    .frame(height: 40)
+                    .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Colores.rojo.opacity(0.3), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
             }
         }

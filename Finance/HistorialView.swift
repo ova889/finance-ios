@@ -14,6 +14,7 @@ struct HistorialView: View {
     @State private var busqueda = ""
     @State private var movimientoAEditar: Movimiento?
     @State private var archivoCompartir: ExportService.Resultado?
+    @State private var cargado = false
 
     init(userId: String) {
         self.userId = userId
@@ -69,13 +70,21 @@ struct HistorialView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView(showsIndicators: false)
+            .scrollDismissesKeyboard(.interactively) {
             VStack(spacing: 12) {
                 cabecera
+                    .opacity(cargado ? 1 : 0)
+                    .offset(y: cargado ? 0 : 8)
+                    .animation(.easeOut(duration: 0.25).delay(0.05), value: cargado)
                 filtros
+                    .entrada(retraso: 0.12, cargado: cargado)
                 resumenFiltros
+                    .entrada(retraso: 0.19, cargado: cargado)
                 buscador
+                    .entrada(retraso: 0.26, cargado: cargado)
                 lista
+                    .entrada(retraso: 0.33, cargado: cargado)
             }
             .padding(.horizontal, 10)
             .frame(maxWidth: 720)
@@ -103,6 +112,7 @@ struct HistorialView: View {
                 Text("This will permanently delete \"\(m.descripcion)\" (\(String(format: "$%.2f", m.monto))). This action cannot be undone.")
             }
         }
+        .onAppear { cargado = true }
     }
 
     private var cabecera: some View {
@@ -239,6 +249,9 @@ struct HistorialView: View {
                             .foregroundColor(Color.white.opacity(0.2))
                             .padding(.top, 16)
                             .padding(.horizontal, 4)
+                            .offset(x: cargado ? 0 : -8)
+                            .opacity(cargado ? 1 : 0)
+                            .animation(.easeOut(duration: 0.35).delay(0.35), value: cargado)
 
                         ForEach(grupo.items, id: \.id) { m in
                             filaMovimiento(m)
@@ -410,7 +423,8 @@ struct EditarMovimientoSheet: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
 
-            ScrollView(showsIndicators: false) {
+            ScrollView(showsIndicators: false)
+            .scrollDismissesKeyboard(.interactively) {
                 VStack(spacing: 0) {
                     VistaDropdown(
                         titulo: "Category",
@@ -476,6 +490,7 @@ struct EditarMovimientoSheet: View {
     private func guardar() {
         guard let monto = Double(montoTexto.replacingOccurrences(of: ",", with: ".")),
               monto > 0 else { return }
+        montoEnfocado = true
         movimiento.categoria = categoria
         movimiento.monto = monto
         movimiento.descripcion = descripcion.trimmingCharacters(in: .whitespaces)

@@ -55,22 +55,27 @@ struct IconoMas: Shape {
 struct IconoEngranaje: Shape {
     func path(in rect: CGRect) -> Path {
         let s = rect.width / 24
-        let centro = CGPoint(x: 12 * s, y: 12 * s)
+        let c = CGPoint(x: 12 * s, y: 12 * s)
         var path = Path()
 
-        for k in 0..<8 {
-            let ang = CGFloat(k) * .pi / 4
-            let p = CGPoint(x: centro.x + 5.9 * s * cos(ang), y: centro.y + 5.9 * s * sin(ang))
-            if k == 0 { path.move(to: p) } else { path.addLine(to: p) }
-        }
-        path.closeSubpath()
+        let rT = 10.78 * s
+        let rA = 1.65 * s
+        let a0 = 24.9 * .pi / 180
+        let medio = 34.2 * .pi / 180
 
         for k in 0..<8 {
-            let ang = (CGFloat(k) * .pi / 4) + .pi / 8
-            let inner = CGPoint(x: centro.x + 5.45 * s * cos(ang), y: centro.y + 5.45 * s * sin(ang))
-            let outer = CGPoint(x: centro.x + 9.0 * s * cos(ang), y: centro.y + 9.0 * s * sin(ang))
-            path.move(to: inner)
-            path.addLine(to: outer)
+            let a = a0 + CGFloat(k) * .pi / 4
+            let cc = CGPoint(x: c.x + rT * cos(a), y: c.y + rT * sin(a))
+            let e1 = CGPoint(x: cc.x + rA * cos(a - medio), y: cc.y + rA * sin(a - medio))
+            let e2 = CGPoint(x: cc.x + rA * cos(a + medio), y: cc.y + rA * sin(a + medio))
+            path.move(to: e1)
+            path.addArc(
+                center: cc,
+                radius: rA,
+                startAngle: .radians(Double(atan2(e1.y - cc.y, e1.x - cc.x))),
+                endAngle: .radians(Double(atan2(e2.y - cc.y, e2.x - cc.x))),
+                clockwise: true
+            )
         }
 
         path.addEllipse(in: CGRect(x: 9 * s, y: 9 * s, width: 6 * s, height: 6 * s))

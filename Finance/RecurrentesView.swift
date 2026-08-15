@@ -51,7 +51,8 @@ struct RecurrentesView: View {
             .padding(.top, 10)
             .padding(.bottom, 6)
 
-            ScrollView(showsIndicators: false) {
+            ScrollView(showsIndicators: false)
+            .scrollDismissesKeyboard(.interactively) {
                 VStack(spacing: 12) {
                     CristalCard(padding: 16) {
                         VStack(spacing: 12) {
@@ -75,7 +76,7 @@ struct RecurrentesView: View {
                         Text("No recurring transactions set.")
                             .font(Fuente(13))
                             .foregroundColor(Colores.textoSec)
-                            .padding(.top, 30)
+                            .padding(.top, 40)
                     } else {
                         VStack(spacing: 8) {
                             ForEach(delUsuario, id: \.id) { r in

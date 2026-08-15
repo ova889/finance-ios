@@ -348,10 +348,11 @@ struct AlertaWayne: View {
 
 struct EtiquetaTitulo: View {
     var texto: String
+    var tamano: CGFloat = 17
 
     var body: some View {
         Text(texto)
-            .font(Fuente(17, .bold))
+            .font(Fuente(tamano, .bold))
             .kerning(-0.5)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, alignment: .leading)

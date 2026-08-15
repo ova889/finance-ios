@@ -12,6 +12,7 @@ struct RegistroView: View {
     @State private var fecha = Date()
     @State private var mensaje: String?
     @State private var exito = false
+    @State private var cargado = false
     @FocusState private var montoEnfocado: Bool
     @FocusState private var descripcionEnfocada: Bool
 
@@ -24,10 +25,14 @@ struct RegistroView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView(showsIndicators: false)
+            .scrollDismissesKeyboard(.interactively) {
             VStack(spacing: 0) {
                 EtiquetaTitulo(texto: "Add Transaction")
                     .padding(.bottom, 14)
+                    .opacity(cargado ? 1 : 0)
+                    .offset(y: cargado ? 0 : 8)
+                    .animation(.easeOut(duration: 0.25).delay(0.05), value: cargado)
 
                 if let mensaje = mensaje {
                     AlertaWayne(mensaje: mensaje, exito: exito)
@@ -122,11 +127,13 @@ struct RegistroView: View {
                 }
                 .frame(maxWidth: 480)
                 .frame(maxWidth: .infinity)
+                .entrada(retraso: 0.12, cargado: cargado)
             }
             .padding(.horizontal, 10)
             .padding(.top, 6)
             .padding(.bottom, DesignTokens.contenedorPaddingBottom)
         }
+        .onAppear { cargado = true }
     }
 
     private func cambiarTipo(_ nuevo: String) {

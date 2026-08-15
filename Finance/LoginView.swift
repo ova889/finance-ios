@@ -39,7 +39,8 @@ struct LoginView: View {
             Fondo.gradiente.ignoresSafeArea()
 
             GeometryReader { geo in
-                ScrollView(showsIndicators: false) {
+                ScrollView(showsIndicators: false)
+            .scrollDismissesKeyboard(.interactively) {
                     VStack(spacing: 0) {
                         Spacer(minLength: 30)
 
