@@ -23,14 +23,20 @@ struct DoughnutChart: View {
     let slices: [DoughnutSlice]
 
     @State private var avanzado = false
+    @State private var activas: Set<UUID> = []
+
+    private var visibles: [DoughnutSlice] {
+        let filtradas = slices.filter { activas.contains($0.id) }
+        return filtradas.isEmpty ? slices : filtradas
+    }
 
     private var total: Double {
-        max(slices.reduce(0) { $0 + $1.valor }, 0.0001)
+        max(visibles.reduce(0) { $0 + $1.valor }, 0.0001)
     }
 
     private var cortes: [(slice: DoughnutSlice, inicio: Double, fin: Double)] {
         var acumulado: Double = 0
-        return slices.map { slice in
+        return visibles.map { slice in
             let inicio = acumulado / total
             acumulado += slice.valor
             return (slice, inicio, acumulado / total)
@@ -49,7 +55,6 @@ struct DoughnutChart: View {
                             .trim(from: avanzado ? corte.inicio : 0, to: corte.fin * (avanzado ? 1 : 0))
                             .stroke(corte.slice.color, style: StrokeStyle(lineWidth: ancho, lineCap: .butt))
                             .rotationEffect(.degrees(-90))
-                            .padding(1)
                     }
                 }
                 .frame(width: min(geo.size.width, geo.size.height),
@@ -61,18 +66,31 @@ struct DoughnutChart: View {
 
             VStack(spacing: 12) {
                 ForEach(slices) { slice in
-                    HStack(spacing: 6) {
-                        Circle()
-                            .fill(slice.color)
-                            .frame(width: 5, height: 5)
-                        Text(slice.nombre)
-                            .font(Fuente(9))
-                            .foregroundColor(.white.opacity(0.45))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(formatoMonto(slice.valor))
-                            .font(Fuente(9))
-                            .foregroundColor(.white.opacity(0.45))
+                    let encendida = activas.isEmpty || activas.contains(slice.id)
+                    Button {
+                        withAnimation(.easeOut(duration: 0.8)) {
+                            if activas.contains(slice.id) {
+                                activas.remove(slice.id)
+                            } else {
+                                activas.insert(slice.id)
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(slice.color.opacity(encendida ? 1 : 0.2))
+                                .frame(width: 5, height: 5)
+                            Text(slice.nombre)
+                                .font(Fuente(9))
+                                .foregroundColor(.white.opacity(encendida ? 0.65 : 0.25))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(formatoMonto(slice.valor))
+                                .font(Fuente(9, .medium))
+                                .foregroundColor(.white.opacity(encendida ? 0.6 : 0.2))
+                        }
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }

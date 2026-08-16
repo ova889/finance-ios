@@ -303,6 +303,7 @@ struct DashboardView: View {
                                 Capsule()
                                     .fill(excedido ? Colores.rojo : Color.white.opacity(0.5))
                                     .frame(width: max(geo.size.width * porcentaje / 100, 2))
+                                    .animation(.easeOut(duration: 0.6), value: porcentaje)
                             }
                         }
                         .frame(height: 4)
@@ -379,6 +380,7 @@ struct DashboardView: View {
                             y: .value("Income", t.ingresos)
                         )
                         .foregroundStyle(by: .value("Serie", "Income"))
+                        .position(by: .value("Serie", "Income"))
                         .cornerRadius(4)
 
                         BarMark(
@@ -386,6 +388,7 @@ struct DashboardView: View {
                             y: .value("Expenses", t.gastos)
                         )
                         .foregroundStyle(by: .value("Serie", "Expenses"))
+                        .position(by: .value("Serie", "Expenses"))
                         .cornerRadius(4)
                     }
                     .chartForegroundStyleScale([

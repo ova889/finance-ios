@@ -114,7 +114,7 @@ struct MainView: View {
 
     private func iconoNavegacion(_ item: TabPrincipal) -> some View {
         let activo = tab == item
-        let color = activo ? Color.white : Color.white.opacity(0.4)
+        let color = activo ? Color.white : Color.white.opacity(0.42)
         switch item {
         case .dashboard:
             return AnyView(IconoGrid().stroke(color, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)))
@@ -139,44 +139,41 @@ struct MainView: View {
                     iconoNavegacion(item)
                         .frame(width: 22, height: 22)
                         .frame(width: 46, height: 38)
-                        .background(activo ? Color.white.opacity(0.16) : .clear, in: Capsule())
+                        .background(
+                            activo
+                                ? AnyShapeStyle(LinearGradient(
+                                    colors: [Color.white.opacity(0.28), Color.white.opacity(0.10)],
+                                    startPoint: .top, endPoint: .bottom))
+                                : AnyShapeStyle(.clear),
+                            in: Capsule()
+                        )
                         .contentShape(Capsule())
                 }
-                .buttonStyle(PressStyle(escala: 0.88))
+                .buttonStyle(PressStyle(escala: 0.85))
             }
         }
         .padding(.horizontal, 14)
         .frame(height: 64)
-        .background(Color.white.opacity(0.10))
-        .background {
-            Rectangle()
-                .fill(.regularMaterial)
-                .saturation(1.8)
-                .contrast(1.05)
-        }
+        .background(LinearGradient(
+            colors: [Color.white.opacity(0.15), Color.white.opacity(0.05)],
+            startPoint: .top, endPoint: .bottom
+        ))
+        .background(.ultraThinMaterial)
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.22), lineWidth: 1))
+        .overlay(Capsule().stroke(Color.white.opacity(0.28), lineWidth: 1))
         .overlay(alignment: .top) {
             Capsule()
-                .fill(Color.white.opacity(0.14))
-                .frame(height: 14)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 2)
+                .fill(LinearGradient(
+                    colors: [Color.white.opacity(0.22), .clear],
+                    startPoint: .top, endPoint: .center
+                ))
+                .padding(.horizontal, 1)
                 .allowsHitTesting(false)
         }
         .shadow(color: .black.opacity(0.5), radius: 30, y: 14)
-        .shadow(color: .white.opacity(0.08), radius: 18, y: 0)
-        .scaleEffect(pillPresionado ? 0.97 : 1)
-        .animation(.easeOut(duration: 0.1), value: pillPresionado)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in pillPresionado = true }
-                .onEnded { _ in pillPresionado = false }
-        )
+        .shadow(color: .white.opacity(0.08), radius: 18)
         .padding(.bottom, 24)
     }
-
-    @State private var pillPresionado = false
 
     private func activarPanico() {
         tapBrand += 1
