@@ -88,8 +88,7 @@ struct RecurrentesView: View {
                                             Text("\(r.categoria) · Day \(r.dia) ·")
                                                 .font(Fuente(11))
                                                 .foregroundColor(Colores.textoSec)
-                                            Text(formatoConSigno(r.monto, esIngreso: r.esIngreso))
-                                                .font(Fuente(11, .semibold))
+                                            MontoPrivado(texto: formatoConSigno(r.monto, esIngreso: r.esIngreso), fuente: Fuente(11, .semibold))
                                                 .foregroundColor(r.esIngreso ? Colores.verde : Colores.rojo)
                                         }
                                     }

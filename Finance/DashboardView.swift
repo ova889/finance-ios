@@ -175,14 +175,11 @@ struct DashboardView: View {
 
             let resumen = resumenMes
             HStack(spacing: 8) {
-                Text("+\(formatoMonto(resumen.inc))")
-                    .font(Fuente(10, .semibold))
+                MontoPrivado(texto: "+\(formatoMonto(resumen.inc))", fuente: Fuente(10, .semibold))
                     .foregroundColor(Colores.verde)
-                Text("-\(formatoMonto(resumen.exp))")
-                    .font(Fuente(10, .semibold))
+                MontoPrivado(texto: "-\(formatoMonto(resumen.exp))", fuente: Fuente(10, .semibold))
                     .foregroundColor(Colores.rojo)
-                Text(formatoMonto(resumen.bal))
-                    .font(Fuente(10, .semibold))
+                MontoPrivado(texto: formatoMonto(resumen.bal), fuente: Fuente(10, .semibold))
                     .foregroundColor(resumen.bal >= 0 ? Colores.verde : Colores.rojo)
             }
         }
@@ -215,12 +212,18 @@ struct DashboardView: View {
 
     private var slicesDoughnut: [DoughnutSlice] {
         let colores: [Color] = [
-            .white.opacity(0.85), .white.opacity(0.65), .white.opacity(0.45),
-            .white.opacity(0.30), .white.opacity(0.20), .white.opacity(0.15),
-            Colores.verde.opacity(0.5), Colores.rojo.opacity(0.4), Colores.verde.opacity(0.3)
+            .white.opacity(0.9), Colores.verde.opacity(0.85), Colores.accent.opacity(0.7),
+            Colores.rojo.opacity(0.7), .white.opacity(0.6), Colores.verde.opacity(0.5),
+            Colores.rojo.opacity(0.45), .white.opacity(0.35), Colores.accent.opacity(0.4),
+            Colores.verde.opacity(0.3), .white.opacity(0.22), Colores.rojo.opacity(0.3)
         ]
         return gastosPorCategoria.enumerated().map { idx, item in
-            DoughnutSlice(nombre: item.categoria, valor: item.total, color: colores[idx % colores.count])
+            DoughnutSlice(
+                id: item.categoria,
+                nombre: item.categoria,
+                valor: item.total,
+                color: colores[idx % colores.count]
+            )
         }
     }
 
@@ -292,9 +295,15 @@ struct DashboardView: View {
                                 }
                             }
                             Spacer()
-                            Text("\(formatoMonto(gastado)) / \(formatoMonto(p.limite))")
-                                .font(Fuente(12))
-                                .foregroundColor(excedido ? Colores.rojo : Colores.textoSec)
+                            HStack(spacing: 4) {
+                                MontoPrivado(texto: formatoMonto(gastado), fuente: Fuente(12))
+                                Text("/")
+                                    .font(Fuente(12))
+                                    .foregroundColor(Colores.textoSec)
+                                MontoPrivado(texto: formatoMonto(p.limite), fuente: Fuente(12))
+                            }
+                            .font(Fuente(12))
+                            .foregroundColor(excedido ? Colores.rojo : Colores.textoSec)
                                 .fontWeight(excedido ? .semibold : .regular)
                         }
                         GeometryReader { geo in

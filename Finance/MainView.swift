@@ -73,9 +73,7 @@ struct MainView: View {
 
             Spacer()
 
-            Text(formatoMonto(balance))
-                .font(Fuente(12, .bold))
-                .kerning(-0.3)
+            MontoPrivado(texto: formatoMonto(balance), fuente: Fuente(12, .bold))
                 .foregroundColor(.white)
                 .monospacedDigit()
                 .padding(.trailing, 8)

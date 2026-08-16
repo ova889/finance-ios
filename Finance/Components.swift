@@ -2,10 +2,12 @@ import SwiftUI
 
 struct MontoPrivado: View {
     var texto: String
+    var fuente: Font? = nil
     @AppStorage("privacyMode") private var privacyMode = false
 
     var body: some View {
         Text(texto)
+            .font(fuente)
             .fontWeight(.bold)
             .blur(radius: privacyMode ? 8 : 0)
             .animation(.easeInOut(duration: 0.25), value: privacyMode)
@@ -13,7 +15,7 @@ struct MontoPrivado: View {
 }
 
 struct DoughnutSlice: Identifiable {
-    let id = UUID()
+    let id: String
     let nombre: String
     let valor: Double
     let color: Color
@@ -66,12 +68,14 @@ struct DoughnutChart: View {
                             .font(Fuente(9, .semibold))
                             .kerning(0.8)
                             .foregroundColor(Colores.textoSec.opacity(0.7))
-                        Text(formatoMonto(total))
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                            .monospacedDigit()
-                            .contentTransition(.numericText(value: total))
-                            .animation(.easeOut(duration: 0.5), value: total)
+                        MontoPrivado(
+                            texto: formatoMonto(total),
+                            fuente: .system(size: 28, weight: .bold, design: .rounded)
+                        )
+                        .foregroundColor(.white)
+                        .monospacedDigit()
+                        .contentTransition(.numericText(value: total))
+                        .animation(.easeOut(duration: 0.5), value: total)
                     }
                 }
                 .frame(width: diametro, height: diametro)
@@ -101,8 +105,7 @@ struct DoughnutChart: View {
                                 .foregroundColor(.white.opacity(encendida ? 0.85 : 0.35))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(1)
-                            Text(formatoMonto(slice.valor))
-                                .font(Fuente(13, .semibold))
+                            MontoPrivado(texto: formatoMonto(slice.valor), fuente: Fuente(13, .semibold))
                                 .foregroundColor(.white.opacity(encendida ? 1 : 0.35))
                                 .monospacedDigit()
                             Text(pct(slice.valor))
