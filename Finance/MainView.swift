@@ -85,7 +85,7 @@ VStack(spacing: 0) {
             Fondo.gradiente
             VStack(spacing: 16) {
                 IconoW()
-                    .stroke(Color.white, style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
+                    .fill(Color.white)
                     .frame(width: 46, height: 46)
                     .shadow(color: Color.white.opacity(0.3), radius: 20)
                 Text("FINANCE")
