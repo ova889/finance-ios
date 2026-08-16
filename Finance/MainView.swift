@@ -114,7 +114,7 @@ struct MainView: View {
 
     private func iconoNavegacion(_ item: TabPrincipal) -> some View {
         let activo = tab == item
-        let color = activo ? Color.white : Color.white.opacity(0.25)
+        let color = activo ? Color.white : Color.white.opacity(0.4)
         switch item {
         case .dashboard:
             return AnyView(IconoGrid().stroke(color, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)))
@@ -128,30 +128,44 @@ struct MainView: View {
     }
 
     private var barraNavegacion: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 22) {
             ForEach(TabPrincipal.allCases, id: \.self) { item in
+                let activo = tab == item
                 Button {
-                    tab = item
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                        tab = item
+                    }
                 } label: {
                     iconoNavegacion(item)
-                        .frame(width: DesignTokens.navIconoTamano, height: DesignTokens.navIconoTamano)
-                        .frame(width: DesignTokens.navItemTamano, height: DesignTokens.navItemTamano)
-                        .background(tab == item ? Color.white.opacity(0.08) : .clear)
-                        .clipShape(Circle())
+                        .frame(width: 22, height: 22)
+                        .frame(width: 46, height: 38)
+                        .background(activo ? Color.white.opacity(0.16) : .clear, in: Capsule())
+                        .contentShape(Capsule())
                 }
-                .buttonStyle(PressStyle(escala: 0.9))
+                .buttonStyle(PressStyle(escala: 0.88))
             }
         }
-        .padding(.horizontal, 16)
-        .frame(width: 280, height: DesignTokens.navPillAltura)
-        .background(DesignTokens.navPillFondo)
-        .vidrio()
-        .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
-        .overlay(alignment: .top) {
-            Capsule().fill(Color.white.opacity(0.06)).frame(height: 12).frame(maxWidth: .infinity).padding(.horizontal, 1).allowsHitTesting(false)
+        .padding(.horizontal, 14)
+        .frame(height: 64)
+        .background(Color.white.opacity(0.10))
+        .background {
+            Rectangle()
+                .fill(.regularMaterial)
+                .saturation(1.8)
+                .contrast(1.05)
         }
-        .shadow(color: .black.opacity(0.35), radius: 32, y: 8)
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(Color.white.opacity(0.22), lineWidth: 1))
+        .overlay(alignment: .top) {
+            Capsule()
+                .fill(Color.white.opacity(0.14))
+                .frame(height: 14)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 2)
+                .allowsHitTesting(false)
+        }
+        .shadow(color: .black.opacity(0.5), radius: 30, y: 14)
+        .shadow(color: .white.opacity(0.08), radius: 18, y: 0)
         .scaleEffect(pillPresionado ? 0.97 : 1)
         .animation(.easeOut(duration: 0.1), value: pillPresionado)
         .simultaneousGesture(

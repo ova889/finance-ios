@@ -3,11 +3,11 @@ import UIKit
 
 enum Fondo {
     static let negro = Color(red: 0.0, green: 0.0, blue: 0.0)
-    static let gradiente = RadialGradient(
+    static let gradiente = EllipticalGradient(
         gradient: Gradient(colors: [Color(red: 0.059, green: 0.059, blue: 0.063), Color.black]),
         center: .init(x: 0.5, y: 0.0),
-        startRadius: 0,
-        endRadius: 900
+        startRadiusFraction: 0.0,
+        endRadiusFraction: 1.0
     )
 }
 
@@ -24,10 +24,10 @@ func FuenteMono(_ size: CGFloat, _ peso: Font.Weight = .regular) -> Font {
 }
 
 enum Colores {
-    static let verde = Color(red: 0.188, green: 0.82, blue: 0.345)
-    static let rojo = Color(red: 1.0, green: 0.271, blue: 0.227)
-    static let accent = Color(red: 0.369, green: 0.361, blue: 0.902)
-    static let textoSec = Color(red: 0.557, green: 0.557, blue: 0.576)
+    static let verde = DesignTokens.colorGreen
+    static let rojo = DesignTokens.colorRed
+    static let accent = DesignTokens.colorAccent
+    static let textoSec = DesignTokens.colorTextosec
     static let cardBg = Color(red: 0.031, green: 0.031, blue: 0.047)
     static let campoBg = Color(red: 0.0, green: 0.0, blue: 0.0).opacity(0.25)
     static let borde = Color.white.opacity(0.10)

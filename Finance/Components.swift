@@ -5,9 +5,10 @@ struct MontoPrivado: View {
     @AppStorage("privacyMode") private var privacyMode = false
 
     var body: some View {
-        Text(privacyMode ? "••••••" : texto)
-            .fontWeight(privacyMode ? .regular : .bold)
-            .animation(.easeInOut(duration: 0.2), value: privacyMode)
+        Text(texto)
+            .fontWeight(.bold)
+            .blur(radius: privacyMode ? 8 : 0)
+            .animation(.easeInOut(duration: 0.25), value: privacyMode)
     }
 }
 
@@ -20,6 +21,8 @@ struct DoughnutSlice: Identifiable {
 
 struct DoughnutChart: View {
     let slices: [DoughnutSlice]
+
+    @State private var avanzado = false
 
     private var total: Double {
         max(slices.reduce(0) { $0 + $1.valor }, 0.0001)
@@ -43,7 +46,7 @@ struct DoughnutChart: View {
                         .stroke(Color(red: 0.02, green: 0.02, blue: 0.02), style: StrokeStyle(lineWidth: ancho, lineCap: .butt))
                     ForEach(cortes, id: \.slice.id) { corte in
                         Circle()
-                            .trim(from: corte.inicio, to: corte.fin)
+                            .trim(from: avanzado ? corte.inicio : 0, to: corte.fin * (avanzado ? 1 : 0))
                             .stroke(corte.slice.color, style: StrokeStyle(lineWidth: ancho, lineCap: .butt))
                             .rotationEffect(.degrees(-90))
                             .padding(1)
@@ -52,26 +55,28 @@ struct DoughnutChart: View {
                 .frame(width: min(geo.size.width, geo.size.height),
                        height: min(geo.size.width, geo.size.height))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .animation(.easeOut(duration: 0.8), value: avanzado)
             }
             .frame(height: 190)
 
-            VStack(spacing: 8) {
+            VStack(spacing: 12) {
                 ForEach(slices) { slice in
                     HStack(spacing: 6) {
                         Circle()
                             .fill(slice.color)
                             .frame(width: 5, height: 5)
                         Text(slice.nombre)
-                            .font(Fuente(10))
+                            .font(Fuente(9))
                             .foregroundColor(.white.opacity(0.45))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Text(formatoMonto(slice.valor))
-                            .font(Fuente(10))
+                            .font(Fuente(9))
                             .foregroundColor(.white.opacity(0.45))
                     }
                 }
             }
         }
+        .onAppear { avanzado = true }
     }
 }
 
