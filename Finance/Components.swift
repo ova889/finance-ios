@@ -25,7 +25,7 @@ struct DoughnutChart: View {
     let slices: [DoughnutSlice]
 
     @State private var avanzado = false
-    @State private var activas: Set<UUID> = []
+    @State private var activas: Set<String> = []
 
     private var visibles: [DoughnutSlice] {
         let filtradas = slices.filter { activas.contains($0.id) }
