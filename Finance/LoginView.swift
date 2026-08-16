@@ -101,6 +101,8 @@ struct LoginView: View {
                         }
                         .frame(maxWidth: 400)
                         .padding(.horizontal, 24)
+                        .shadow(color: Colores.accent.opacity(0.08), radius: 30, y: 0)
+                        .shadow(color: .white.opacity(0.05), radius: 8, y: 0)
                         .opacity(animada ? 1 : 0)
                         .offset(y: animada ? 0 : 12)
                         .animation(.easeOut(duration: 0.6), value: animada)

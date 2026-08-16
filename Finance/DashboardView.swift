@@ -500,6 +500,7 @@ struct TarjetaResumen: View {
                     .frame(maxWidth: .infinity)
             }
         }
+        .shadow(color: color.opacity(0.12), radius: 14, y: 6)
     }
 }
 

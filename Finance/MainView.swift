@@ -15,6 +15,7 @@ struct MainView: View {
     @State private var tab: TabPrincipal = .dashboard
     @State private var tapBrand = 0
     @State private var timerPanico: Task<Void, Never>?
+    @State private var latido = false
     @Namespace private var navEspacio
     @Query private var movimientos: [Movimiento]
 
@@ -53,6 +54,7 @@ struct MainView: View {
             barraNavegacion
         }
         .preferredColorScheme(.dark)
+        .onAppear { latido = true }
     }
 
     private var topBar: some View {
@@ -86,7 +88,9 @@ struct MainView: View {
             Circle()
                 .fill(Colores.verde)
                 .frame(width: 6, height: 6)
-                .shadow(color: Colores.verde.opacity(0.4), radius: 6)
+                .scaleEffect(latido ? 1.3 : 1)
+                .shadow(color: Colores.verde.opacity(latido ? 0.6 : 0.25), radius: latido ? 8 : 3)
+                .animation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true), value: latido)
 
             Button(action: { session.cerrarSesion() }) {
                 Text("Sign Out")

@@ -86,7 +86,7 @@ struct CristalCard<Contenido: View>: View {
             .padding(.horizontal, paddingHorizontal ?? padding)
             .padding(.vertical, padding)
             .background(Colores.cardBg.opacity(0.55))
-            .overlay(Color.black.opacity(0.55))
+            .overlay(Color.black.opacity(0.55).allowsHitTesting(false))
             .overlay(alignment: .topLeading) {
                 LinearGradient(
                     gradient: Gradient(colors: [Color.white.opacity(0.06), .clear]),
