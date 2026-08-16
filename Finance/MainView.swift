@@ -85,7 +85,7 @@ VStack(spacing: 0) {
             Fondo.gradiente
             VStack(spacing: 16) {
                 IconoW()
-                    .fill(Color.white)
+                    .stroke(Color.white, style: StrokeStyle(lineWidth: 1.8, lineCap: .round, lineJoin: .round))
                     .frame(width: 46, height: 46)
                     .shadow(color: Color.white.opacity(0.3), radius: 20)
                 Text("FINANCE")
@@ -112,6 +112,7 @@ VStack(spacing: 0) {
                 HStack(spacing: 6) {
                     IconoW()
                         .frame(width: 16, height: 16)
+                        .stroke(Color.white.opacity(0.5), style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
                         .opacity(0.5)
                     Text("FINANCE")
                         .font(Fuente(12, .semibold))
@@ -209,16 +210,14 @@ VStack(spacing: 0) {
         }
         .padding(.horizontal, 14)
         .frame(height: 64)
-        .background(
-            LinearGradient(
-                colors: [Color.white.opacity(0.15), Color.white.opacity(0.05)],
-                startPoint: .top, endPoint: .bottom
-            )
-            .blendMode(.plusLighter)
-        )
-        .background(.ultraThinMaterial)
+        .background {
+            RoundedRectangle(cornerRadius: 30, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .saturation(1.5)
+                .blur(radius: 8)
+        }
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.28), lineWidth: 1))
+        .overlay(Capsule().stroke(Color.white.opacity(0.35), lineWidth: 1))
         .overlay(Capsule().inset(by: 0.5).stroke(Color.black.opacity(0.15), lineWidth: 0.5))
         .overlay(alignment: .top) {
             Capsule()
@@ -231,8 +230,8 @@ VStack(spacing: 0) {
                 .blendMode(.overlay)
                 .allowsHitTesting(false)
         }
-        .shadow(color: .black.opacity(0.4), radius: 24, y: 14)
-        .shadow(color: .black.opacity(0.25), radius: 6, y: 4)
+        .shadow(color: .black.opacity(0.3), radius: 32, y: 20)
+        .shadow(color: .black.opacity(0.2), radius: 8, y: 8)
         .padding(.bottom, 24)
     }
 

@@ -1,18 +1,16 @@
 import SwiftUI
 
-struct IconoW: View {
-    var body: some View {
-        Canvas { contexto, size in
-            let s = min(size.width, size.height) / 24
-            var path = Path()
-            path.move(to: CGPoint(x: 8 * s, y: 4 * s))
-            path.addLine(to: CGPoint(x: 18 * s, y: 4 * s))
-            path.move(to: CGPoint(x: 8 * s, y: 4 * s))
-            path.addLine(to: CGPoint(x: 8 * s, y: 20 * s))
-            path.move(to: CGPoint(x: 8 * s, y: 12 * s))
-            path.addLine(to: CGPoint(x: 15 * s, y: 12 * s))
-            contexto.stroke(path, with: .color(.white), style: StrokeStyle(lineWidth: 1.8 * s, lineCap: .round, lineJoin: .round))
-        }
+struct IconoW: Shape {
+    func path(in rect: CGRect) -> Path {
+        let s = min(rect.width, rect.height) / 24
+        var path = Path()
+        path.move(to: CGPoint(x: 8 * s, y: 4 * s))
+        path.addLine(to: CGPoint(x: 18 * s, y: 4 * s))
+        path.move(to: CGPoint(x: 8 * s, y: 4 * s))
+        path.addLine(to: CGPoint(x: 8 * s, y: 20 * s))
+        path.move(to: CGPoint(x: 8 * s, y: 12 * s))
+        path.addLine(to: CGPoint(x: 15 * s, y: 12 * s))
+        return path
     }
 }
 
