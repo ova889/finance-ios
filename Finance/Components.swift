@@ -46,29 +46,45 @@ struct DoughnutChart: View {
     var body: some View {
         VStack(spacing: 12) {
             GeometryReader { geo in
-                let ancho = min(geo.size.width, geo.size.height) * 0.11
+                let diametro = min(geo.size.width, geo.size.height)
+                let ancho = diametro * 0.14
+                let gap = 0.0035
                 ZStack {
                     Circle()
-                        .stroke(Color(red: 0.02, green: 0.02, blue: 0.02), style: StrokeStyle(lineWidth: ancho, lineCap: .butt))
+                        .stroke(Color(red: 0.02, green: 0.02, blue: 0.02), style: StrokeStyle(lineWidth: ancho, lineCap: .round))
                     ForEach(cortes, id: \.slice.id) { corte in
                         Circle()
-                            .trim(from: avanzado ? corte.inicio : 0, to: corte.fin * (avanzado ? 1 : 0))
-                            .stroke(corte.slice.color, style: StrokeStyle(lineWidth: ancho, lineCap: .butt))
+                            .trim(
+                                from: avanzado ? min(corte.inicio + gap, 1) : 0,
+                                to: avanzado ? max(corte.fin - gap, 0) : 0
+                            )
+                            .stroke(corte.slice.color, style: StrokeStyle(lineWidth: ancho, lineCap: .round))
                             .rotationEffect(.degrees(-90))
                     }
+                    VStack(spacing: 4) {
+                        Text("TOTAL GASTADO")
+                            .font(Fuente(9, .semibold))
+                            .kerning(0.8)
+                            .foregroundColor(Colores.textoSec.opacity(0.7))
+                        Text(formatoMonto(total))
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .monospacedDigit()
+                            .contentTransition(.numericText(value: total))
+                            .animation(.easeOut(duration: 0.5), value: total)
+                    }
                 }
-                .frame(width: min(geo.size.width, geo.size.height),
-                       height: min(geo.size.width, geo.size.height))
+                .frame(width: diametro, height: diametro)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .animation(.easeOut(duration: 0.8), value: avanzado)
+                .animation(.timingCurve(0.0, 0.0, 0.58, 1.0, duration: 0.8), value: avanzado)
             }
             .frame(height: 190)
 
-            VStack(spacing: 12) {
-                ForEach(slices) { slice in
+            VStack(spacing: 0) {
+                ForEach(Array(slices.enumerated()), id: \.element.id) { indice, slice in
                     let encendida = activas.isEmpty || activas.contains(slice.id)
                     Button {
-                        withAnimation(.easeOut(duration: 0.8)) {
+                        withAnimation(.easeOut(duration: 0.4)) {
                             if activas.contains(slice.id) {
                                 activas.remove(slice.id)
                             } else {
@@ -76,25 +92,48 @@ struct DoughnutChart: View {
                             }
                         }
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 8) {
                             Circle()
-                                .fill(slice.color.opacity(encendida ? 1 : 0.2))
-                                .frame(width: 5, height: 5)
+                                .fill(slice.color.opacity(encendida ? 1 : 0.15))
+                                .frame(width: 10, height: 10)
                             Text(slice.nombre)
-                                .font(Fuente(9))
-                                .foregroundColor(.white.opacity(encendida ? 0.65 : 0.25))
+                                .font(Fuente(13))
+                                .foregroundColor(.white.opacity(encendida ? 0.85 : 0.35))
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .lineLimit(1)
                             Text(formatoMonto(slice.valor))
-                                .font(Fuente(9, .medium))
-                                .foregroundColor(.white.opacity(encendida ? 0.6 : 0.2))
+                                .font(Fuente(13, .semibold))
+                                .foregroundColor(.white.opacity(encendida ? 1 : 0.35))
+                                .monospacedDigit()
+                            Text(pct(slice.valor))
+                                .font(Fuente(12))
+                                .foregroundColor(Colores.textoSec)
+                                .monospacedDigit()
                         }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 12)
                         .contentShape(Rectangle())
+                        .background(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(Color.white.opacity(0.05))
+                                .opacity(encendida ? 0 : 1)
+                        )
                     }
                     .buttonStyle(.plain)
+                    if indice < slices.count - 1 {
+                        Rectangle()
+                            .fill(Color.white.opacity(0.06))
+                            .frame(height: 0.5)
+                            .padding(.leading, 36)
+                    }
                 }
             }
         }
         .onAppear { avanzado = true }
+    }
+
+    private func pct(_ valor: Double) -> String {
+        String(format: "%.0f%%", (valor / total) * 100)
     }
 }
 

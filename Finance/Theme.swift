@@ -5,9 +5,9 @@ enum Fondo {
     static let negro = Color(red: 0.0, green: 0.0, blue: 0.0)
     static let gradiente = EllipticalGradient(
         gradient: Gradient(colors: [Color(red: 0.059, green: 0.059, blue: 0.063), Color.black]),
-        center: .init(x: 0.5, y: 0.0),
+        center: .init(x: 0.5, y: -0.1),
         startRadiusFraction: 0.0,
-        endRadiusFraction: 1.0
+        endRadiusFraction: 1.15
     )
 }
 
@@ -318,6 +318,25 @@ struct PressStyle: ButtonStyle {
         configuration.label
             .scaleEffect(configuration.isPressed ? escala : 1)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+struct PressLiquido: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.92 : 1)
+            .opacity(configuration.isPressed ? 0.7 : 1)
+            .animation(
+                configuration.isPressed
+                    ? .easeOut(duration: 0.1)
+                    : .spring(response: 0.3, dampingFraction: 0.55),
+                value: configuration.isPressed
+            )
+            .onChange(of: configuration.isPressed) { _, pulsado in
+                if pulsado {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                }
+            }
     }
 }
 

@@ -15,6 +15,7 @@ struct MainView: View {
     @State private var tab: TabPrincipal = .dashboard
     @State private var tapBrand = 0
     @State private var timerPanico: Task<Void, Never>?
+    @Namespace private var navEspacio
     @Query private var movimientos: [Movimiento]
 
     init(userId: String) {
@@ -114,7 +115,7 @@ struct MainView: View {
 
     private func iconoNavegacion(_ item: TabPrincipal) -> some View {
         let activo = tab == item
-        let color = activo ? Color.white : Color.white.opacity(0.42)
+        let color = activo ? Color.white : Color.white.opacity(0.55)
         switch item {
         case .dashboard:
             return AnyView(IconoGrid().stroke(color, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)))
@@ -132,46 +133,60 @@ struct MainView: View {
             ForEach(TabPrincipal.allCases, id: \.self) { item in
                 let activo = tab == item
                 Button {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         tab = item
                     }
                 } label: {
                     iconoNavegacion(item)
                         .frame(width: 22, height: 22)
                         .frame(width: 46, height: 38)
+                        .scaleEffect(activo ? 1 : 0.94)
                         .background(
-                            activo
-                                ? AnyShapeStyle(LinearGradient(
-                                    colors: [Color.white.opacity(0.28), Color.white.opacity(0.10)],
-                                    startPoint: .top, endPoint: .bottom))
-                                : AnyShapeStyle(.clear),
+                            Group {
+                                if activo {
+                                    LinearGradient(
+                                        colors: [Color.white.opacity(0.28), Color.white.opacity(0.10)],
+                                        startPoint: .top, endPoint: .bottom
+                                    )
+                                    .matchedGeometryEffect(id: "pill-activo", in: navEspacio)
+                                    .overlay(
+                                        Capsule().stroke(Color.white.opacity(0.35), lineWidth: 0.5)
+                                    )
+                                }
+                            },
                             in: Capsule()
                         )
                         .contentShape(Capsule())
                 }
-                .buttonStyle(PressStyle(escala: 0.85))
+                .buttonStyle(PressLiquido())
             }
         }
         .padding(.horizontal, 14)
         .frame(height: 64)
-        .background(LinearGradient(
-            colors: [Color.white.opacity(0.15), Color.white.opacity(0.05)],
-            startPoint: .top, endPoint: .bottom
-        ))
+        .background(
+            LinearGradient(
+                colors: [Color.white.opacity(0.15), Color.white.opacity(0.05)],
+                startPoint: .top, endPoint: .bottom
+            )
+            .blendMode(.plusLighter)
+        )
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
         .overlay(Capsule().stroke(Color.white.opacity(0.28), lineWidth: 1))
+        .overlay(Capsule().inset(by: 0.5).stroke(Color.black.opacity(0.15), lineWidth: 0.5))
         .overlay(alignment: .top) {
             Capsule()
                 .fill(LinearGradient(
                     colors: [Color.white.opacity(0.22), .clear],
-                    startPoint: .top, endPoint: .center
+                    startPoint: .top, endPoint: .bottom
                 ))
+                .frame(height: 32)
                 .padding(.horizontal, 1)
+                .blendMode(.overlay)
                 .allowsHitTesting(false)
         }
-        .shadow(color: .black.opacity(0.5), radius: 30, y: 14)
-        .shadow(color: .white.opacity(0.08), radius: 18)
+        .shadow(color: .black.opacity(0.4), radius: 24, y: 14)
+        .shadow(color: .black.opacity(0.25), radius: 6, y: 4)
         .padding(.bottom, 24)
     }
 
