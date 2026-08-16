@@ -73,6 +73,23 @@ final class Recurrente {
     var esIngreso: Bool { tipo == "ingreso" }
 }
 
+@Model
+final class Meta {
+    var nombre: String
+    var objetivo: Double
+    var ahorrado: Double
+    var userId: String
+    var fechaCreacion: Date
+
+    init(nombre: String, objetivo: Double, userId: String) {
+        self.nombre = nombre
+        self.objetivo = objetivo
+        self.ahorrado = 0
+        self.userId = userId
+        self.fechaCreacion = Date()
+    }
+}
+
 enum Categorias {
     static let ingreso = ["Salary", "Gifts", "Other"]
     static let gasto = ["Housing", "Groceries", "Food", "Transportation", "Subscriptions", "Health", "Entertainment", "Clothing", "Education", "Utilities"]

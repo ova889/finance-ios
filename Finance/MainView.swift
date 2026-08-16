@@ -16,6 +16,8 @@ struct MainView: View {
     @State private var tapBrand = 0
     @State private var timerPanico: Task<Void, Never>?
     @State private var latido = false
+    @State private var splash = true
+    @State private var pulso = false
     @Namespace private var navEspacio
     @Query private var movimientos: [Movimiento]
 
@@ -34,7 +36,7 @@ struct MainView: View {
         ZStack(alignment: .bottom) {
             Fondo.gradiente.ignoresSafeArea()
 
-            VStack(spacing: 0) {
+VStack(spacing: 0) {
                 topBar
                 Group {
                     switch tab {
@@ -50,12 +52,56 @@ struct MainView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .scaleEffect(splash ? 1.04 : 1)
+            .blur(radius: splash ? 6 : 0)
+            .animation(.easeOut(duration: 0.45), value: splash)
 
-barraNavegacion
+            barraNavegacion
             DropdownHost()
+
+            if splash {
+                pantallaBienvenida
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+            }
         }
         .preferredColorScheme(.dark)
-        .onAppear { latido = true }
+        .onAppear {
+            latido = true
+            pulso = true
+            if splash {
+                Task {
+                    try? await Task.sleep(nanoseconds: 1_050_000_000)
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        splash = false
+                    }
+                }
+            }
+        }
+    }
+
+    private var pantallaBienvenida: some View {
+        ZStack {
+            Fondo.gradiente
+            VStack(spacing: 16) {
+                IconoW()
+                    .stroke(Color.white, style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
+                    .frame(width: 46, height: 46)
+                    .shadow(color: Color.white.opacity(0.3), radius: 20)
+                Text("FINANCE")
+                    .font(Fuente(24, .bold))
+                    .kerning(7)
+                    .foregroundColor(.white)
+                Rectangle()
+                    .fill(Colores.accent)
+                    .frame(width: 40, height: 2)
+                    .shadow(color: Colores.accent.opacity(0.5), radius: 8)
+            }
+            .scaleEffect(pulso ? 1.06 : 0.96)
+            .opacity(pulso ? 1 : 0.35)
+            .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: pulso)
+        }
+        .background(Color.black)
     }
 
     private var topBar: some View {

@@ -9,7 +9,7 @@ struct FinanceApp: App {
 
     init() {
         do {
-            container = try ModelContainer(for: Usuario.self, Movimiento.self, Presupuesto.self, Recurrente.self)
+            container = try ModelContainer(for: Usuario.self, Movimiento.self, Presupuesto.self, Recurrente.self, Meta.self)
         } catch {
             fatalError("No se pudo crear el contenedor de datos: \(error)")
         }

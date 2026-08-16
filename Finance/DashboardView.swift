@@ -7,22 +7,22 @@ struct DashboardView: View {
     @Environment(\.modelContext) private var context
 
     @Query private var movimientos: [Movimiento]
-    @Query private var presupuestos: [Presupuesto]
+    @Query private var metas: [Meta]
 
     @State private var mostrarRecurrentes = false
     @State private var toast: String?
     @State private var toastTipo: ToastWayne.TipoToast = .exito
     @State private var mesSeleccionado = mesActual()
-    @State private var nuevaCategoria = Categorias.gasto[0]
-    @State private var nuevoLimite = ""
+    @State private var metaNombre = ""
+    @State private var metaObjetivo = ""
+    @State private var metaAEliminar: Meta?
     @State private var cargado = false
-    @State private var presupuestoAEliminar: Presupuesto?
-    @FocusState private var limiteEnfocado: Bool
+    @FocusState private var metaEnfocado: Bool
 
     init(userId: String) {
         self.userId = userId
         _movimientos = Query(filter: #Predicate<Movimiento> { $0.userId == userId })
-        _presupuestos = Query(filter: #Predicate<Presupuesto> { $0.userId == userId })
+        _metas = Query(filter: #Predicate<Meta> { $0.userId == userId })
     }
 
     private var delUsuario: [Movimiento] {
@@ -114,7 +114,7 @@ struct DashboardView: View {
                     .entrada(retraso: 0.22, cargado: cargado)
                 tarjetaRecientes
                     .entrada(retraso: 0.29, cargado: cargado)
-                tarjetaPresupuestos
+                tarjetaMetas
                     .entrada(retraso: 0.36, cargado: cargado)
                 tarjetaRecurrentes
                     .entrada(retraso: 0.43, cargado: cargado)
@@ -145,16 +145,16 @@ struct DashboardView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .alert("Delete budget for \(presupuestoAEliminar?.categoria ?? "")?", isPresented: Binding(get: { presupuestoAEliminar != nil }, set: { if !$0 { presupuestoAEliminar = nil } })) {
+        .alert("Delete goal \"\(metaAEliminar?.nombre ?? "")?\"", isPresented: Binding(get: { metaAEliminar != nil }, set: { if !$0 { metaAEliminar = nil } })) {
             Button("Delete", role: .destructive) {
-                if let p = presupuestoAEliminar {
-                    eliminarPresupuesto(p)
+                if let m = metaAEliminar {
+                    eliminarMeta(m)
                 }
-                presupuestoAEliminar = nil
+                metaAEliminar = nil
             }
-            Button("Cancel", role: .cancel) { presupuestoAEliminar = nil }
+            Button("Cancel", role: .cancel) { metaAEliminar = nil }
         } message: {
-            Text("This budget and its tracking will be removed. This action cannot be undone.")
+            Text("This goal and its savings will be removed. This action cannot be undone.")
         }
     }
 
@@ -212,10 +212,10 @@ struct DashboardView: View {
 
     private var slicesDoughnut: [DoughnutSlice] {
         let colores: [Color] = [
-            .white.opacity(0.9), Colores.verde.opacity(0.85), Colores.accent.opacity(0.7),
-            Colores.rojo.opacity(0.7), .white.opacity(0.6), Colores.verde.opacity(0.5),
-            Colores.rojo.opacity(0.45), .white.opacity(0.35), Colores.accent.opacity(0.4),
-            Colores.verde.opacity(0.3), .white.opacity(0.22), Colores.rojo.opacity(0.3)
+            .white.opacity(0.9), .white.opacity(0.75), .white.opacity(0.6),
+            .white.opacity(0.45), .white.opacity(0.3), .white.opacity(0.18),
+            .white.opacity(0.12), .white.opacity(0.08), Colores.verde.opacity(0.3),
+            Colores.rojo.opacity(0.25), .white.opacity(0.06), .white.opacity(0.04)
         ]
         return gastosPorCategoria.enumerated().map { idx, item in
             DoughnutSlice(
@@ -262,114 +262,155 @@ struct DashboardView: View {
         }
     }
 
-    private var tarjetaPresupuestos: some View {
+    private var tarjetaMetas: some View {
         CristalCard(padding: 16) {
             VStack(alignment: .leading, spacing: 12) {
-                HTitle(texto: "Category Budgets")
+                HStack(alignment: .center) {
+                    HTitle(texto: "Goals & Savings")
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Circle().fill(Colores.verde).frame(width: 5, height: 5)
+                        MontoPrivado(texto: formatoMonto(metas.reduce(0) { $0 + $1.ahorrado }), fuente: Fuente(11, .semibold))
+                            .foregroundColor(.white)
+                    }
+                    .monospacedDigit()
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.white.opacity(0.06))
+                    .clipShape(Capsule())
+                }
 
-                let budgets = presupuestos.filter { $0.userId == userId }
-
-                if budgets.isEmpty {
-                    Text("No budgets set yet.")
+                if metas.isEmpty {
+                    Text("Crea tu primera meta: algo que quieras comprar o lograr.")
                         .font(Fuente(12))
                         .foregroundColor(Colores.textoSec)
                 }
 
-                ForEach(budgets, id: \.categoria) { p in
-                    let gastado = gastosPorCategoria.first(where: { $0.categoria == p.categoria })?.total ?? 0
-                    let excedido = gastado > p.limite
-                    let porcentaje = p.limite > 0 ? min(100, (gastado / p.limite) * 100) : 0
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            HStack(spacing: 6) {
-                                Text(p.categoria)
-                                    .font(Fuente(12))
-                                    .foregroundColor(.white)
-                                Button {
-                                    presupuestoAEliminar = p
-                                } label: {
-                                    Image(systemName: "xmark")
-                                        .font(Fuente(10))
-                                        .foregroundColor(Colores.rojo.opacity(0.4))
-                                }
-                            }
-                            Spacer()
-                            HStack(spacing: 4) {
-                                MontoPrivado(texto: formatoMonto(gastado), fuente: Fuente(12))
-                                Text("/")
-                                    .font(Fuente(12))
-                                    .foregroundColor(Colores.textoSec)
-                                MontoPrivado(texto: formatoMonto(p.limite), fuente: Fuente(12))
-                            }
-                            .font(Fuente(12))
-                            .foregroundColor(excedido ? Colores.rojo : Colores.textoSec)
-                                .fontWeight(excedido ? .semibold : .regular)
-                        }
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                Capsule().fill(Color.white.opacity(0.04))
-                                Capsule()
-                                    .fill(excedido ? Colores.rojo : Color.white.opacity(0.5))
-                                    .frame(width: max(geo.size.width * porcentaje / 100, 2))
-                                    .animation(.easeOut(duration: 0.6), value: porcentaje)
-                            }
-                        }
-                        .frame(height: 4)
-                        if excedido {
-                            Text("Exceeded this budget.")
-                                .font(Fuente(11))
-                                .foregroundColor(Colores.rojo)
-                        }
-                    }
-                    .padding(.bottom, 4)
+                ForEach(metas) { meta in
+                    filaMeta(meta)
                 }
+
+                Rectangle()
+                    .fill(Color.white.opacity(0.06))
+                    .frame(height: 1)
 
                 HStack(alignment: .bottom, spacing: 8) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Category")
+                        Text("Goal")
                             .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
-                        VistaDropdown(
-                            opciones: Categorias.gasto,
-                            seleccion: $nuevaCategoria,
-                            margenInferior: 0
-                        )
+                        TextField("PS5 · viaje · etc", text: $metaNombre)
+                            .font(Fuente(14))
+                            .focused($metaEnfocado)
+                            .padding(.horizontal, 14)
+                            .frame(height: 44)
+                            .bordeCampo(enfocado: metaEnfocado)
                     }
                     .frame(maxWidth: .infinity)
 
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Limit ($)")
+                        Text("Target ($)")
                             .font(Fuente(11, .medium))
                             .foregroundColor(Colores.textoSec)
-                        TextField("200.00", text: $nuevoLimite)
+                        TextField("800.00", text: $metaObjetivo)
                             .keyboardType(.decimalPad)
-                            .focused($limiteEnfocado)
-                            .font(Fuente(16))
-                            .padding(.horizontal, 16)
-                            .frame(height: 48)
-                            .bordeCampo(enfocado: limiteEnfocado)
+                            .focused($metaEnfocado)
+                            .font(Fuente(14))
+                            .padding(.horizontal, 14)
+                            .frame(height: 44)
+                            .frame(width: 110)
+                            .bordeCampo(enfocado: metaEnfocado)
                     }
-                    .frame(maxWidth: .infinity)
 
                     Button {
-                        guardarPresupuesto()
+                        guardarMeta()
                     } label: {
-                        Text("Set Budget")
-                            .font(Fuente(11, .semibold))
-                            .kerning(1.5)
-                            .textCase(.uppercase)
-                            .foregroundColor(.white)
-                            .frame(height: 40)
-                            .frame(maxWidth: .infinity)
-                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.2), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        Image(systemName: "plus")
+                            .font(Fuente(15, .semibold))
+                            .foregroundColor(.black)
+                            .frame(width: 44, height: 44)
+                            .background(Colores.verde)
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
-                    .buttonStyle(ScalePressStyle(presionado: .constant(false)))
+                    .buttonStyle(PressStyle(escala: 0.92))
                 }
-                .padding(.top, 8)
             }
         }
+    }
+
+    private func filaMeta(_ meta: Meta) -> some View {
+        let pct = meta.objetivo > 0 ? min(meta.ahorrado / meta.objetivo, 1) : 0
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(meta.nombre)
+                        .font(Fuente(13, .semibold))
+                        .foregroundColor(.white)
+                    HStack(spacing: 3) {
+                        MontoPrivado(texto: formatoMonto(meta.ahorrado), fuente: Fuente(11, .semibold))
+                            .foregroundColor(Colores.verde)
+                        Text("de")
+                            .font(Fuente(11))
+                            .foregroundColor(Colores.textoSec)
+                        MontoPrivado(texto: formatoMonto(meta.objetivo), fuente: Fuente(11))
+                            .foregroundColor(.white.opacity(0.5))
+                        Text("· \(Int(pct * 100))%")
+                            .font(Fuente(11, .medium))
+                            .foregroundColor(pct >= 1 ? Colores.verde : Color.white.opacity(0.35))
+                    }
+                    .monospacedDigit()
+                }
+                Spacer()
+                Button {
+                    ajustarAhorro(meta, delta: 10)
+                } label: {
+                    Image(systemName: "plus")
+                        .font(Fuente(11, .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 30, height: 30)
+                        .background(Color.white.opacity(0.08))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(PressStyle(escala: 0.9))
+                Button {
+                    if meta.ahorrado >= 10 {
+                        ajustarAhorro(meta, delta: -10)
+                    }
+                } label: {
+                    Image(systemName: "minus")
+                        .font(Fuente(11, .semibold))
+                        .foregroundColor(.white.opacity(0.7))
+                        .frame(width: 30, height: 30)
+                        .background(Color.white.opacity(0.05))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(PressStyle(escala: 0.9))
+                Button {
+                    metaAEliminar = meta
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(Fuente(10, .semibold))
+                        .foregroundColor(Colores.rojo.opacity(0.5))
+                        .frame(width: 28, height: 28)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(PressStyle(escala: 0.9))
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.white.opacity(0.05))
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [Colores.verde, Colores.verde.opacity(0.6)],
+                            startPoint: .leading, endPoint: .trailing
+                        ))
+                        .frame(width: max(geo.size.width * CGFloat(pct), 2))
+                        .animation(.easeOut(duration: 0.6), value: pct)
+                }
+            }
+            .frame(height: 4)
+        }
+        .padding(.vertical, 4)
     }
 
     private var tarjetaTendencias: some View {
@@ -446,21 +487,25 @@ struct DashboardView: View {
         }
     }
 
-    private func guardarPresupuesto() {
-        guard let limite = Double(nuevoLimite.replacingOccurrences(of: ",", with: ".")),
-              limite > 0 else { return }
-        if let existente = presupuestos.first(where: { $0.categoria == nuevaCategoria && $0.userId == userId }) {
-            existente.limite = limite
-        } else {
-            let nuevo = Presupuesto(categoria: nuevaCategoria, limite: limite, userId: userId)
-            context.insert(nuevo)
-        }
+    private func guardarMeta() {
+        let nombre = metaNombre.trimmingCharacters(in: .whitespaces)
+        guard !nombre.isEmpty,
+              let objetivo = Double(metaObjetivo.replacingOccurrences(of: ",", with: ".")),
+              objetivo > 0 else { return }
+        context.insert(Meta(nombre: nombre, objetivo: objetivo, userId: userId))
         try? context.save()
-        nuevoLimite = ""
+        metaNombre = ""
+        metaObjetivo = ""
+        metaEnfocado = false
     }
 
-    private func eliminarPresupuesto(_ p: Presupuesto) {
-        context.delete(p)
+    private func eliminarMeta(_ meta: Meta) {
+        context.delete(meta)
+        try? context.save()
+    }
+
+    private func ajustarAhorro(_ meta: Meta, delta: Double) {
+        meta.ahorrado = max(0, meta.ahorrado + delta)
         try? context.save()
     }
 
