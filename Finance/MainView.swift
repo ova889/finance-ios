@@ -113,6 +113,17 @@ struct MainView: View {
         }
     }
 
+    @ViewBuilder
+    private func capaActiva() -> some View {
+        LinearGradient(
+            colors: [Color.white.opacity(0.28), Color.white.opacity(0.10)],
+            startPoint: .top, endPoint: .bottom
+        )
+        .clipShape(Capsule())
+        .matchedGeometryEffect(id: "pill-activo", in: navEspacio)
+        .overlay(Capsule().stroke(Color.white.opacity(0.35), lineWidth: 0.5))
+    }
+
     private func iconoNavegacion(_ item: TabPrincipal) -> some View {
         let activo = tab == item
         let color = activo ? Color.white : Color.white.opacity(0.55)
@@ -141,21 +152,7 @@ struct MainView: View {
                         .frame(width: 22, height: 22)
                         .frame(width: 46, height: 38)
                         .scaleEffect(activo ? 1 : 0.94)
-                        .background(
-                            Group {
-                                if activo {
-                                    LinearGradient(
-                                        colors: [Color.white.opacity(0.28), Color.white.opacity(0.10)],
-                                        startPoint: .top, endPoint: .bottom
-                                    )
-                                    .matchedGeometryEffect(id: "pill-activo", in: navEspacio)
-                                    .overlay(
-                                        Capsule().stroke(Color.white.opacity(0.35), lineWidth: 0.5)
-                                    )
-                                }
-                            },
-                            in: Capsule()
-                        )
+                        .overlay(activo ? AnyView(capaActiva()) : AnyView(EmptyView()))
                         .contentShape(Capsule())
                 }
                 .buttonStyle(PressLiquido())
