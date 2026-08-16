@@ -22,6 +22,7 @@
 		AF000000000000000000020D /* ConfiguracionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000000000000000000010D /* ConfiguracionView.swift */; };
 		AF000000000000000000020E /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000000000000000000010E /* ExportService.swift */; };
 		AF000000000000000000020F /* RecurringService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000000000000000000010F /* RecurringService.swift */; };
+		AF0000000000000000000231 /* OverlayCapas.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000230 /* OverlayCapas.swift */; };
 		AF0000000000000000000210 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000110 /* Assets.xcassets */; };
 		AF0000000000000000000211 /* LandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000111 /* LandingView.swift */; };
 		AF0000000000000000000212 /* Iconos.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000112 /* Iconos.swift */; };
@@ -47,6 +48,7 @@ AF0000000000000000000222 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFi
 		AF000000000000000000010D /* ConfiguracionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfiguracionView.swift; sourceTree = "<group>"; };
 		AF000000000000000000010E /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
 		AF000000000000000000010F /* RecurringService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringService.swift; sourceTree = "<group>"; };
+		AF0000000000000000000230 /* OverlayCapas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayCapas.swift; sourceTree = "<group>"; };
 		AF0000000000000000000110 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AF0000000000000000000111 /* LandingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingView.swift; sourceTree = "<group>"; };
 		AF0000000000000000000112 /* Iconos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Iconos.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@ AF0000000000000000000122 /* DesignTokens.swift */ = {isa = PBXFileReference; las
 				AF000000000000000000010D /* ConfiguracionView.swift */,
 				AF000000000000000000010E /* ExportService.swift */,
 				AF000000000000000000010F /* RecurringService.swift */,
+				AF0000000000000000000230 /* OverlayCapas.swift */,
 				AF0000000000000000000012 /* Info.plist */,
 				AF0000000000000000000110 /* Assets.xcassets */,
 			);
@@ -195,6 +198,7 @@ AF0000000000000000000122 /* DesignTokens.swift */ = {isa = PBXFileReference; las
 				AF000000000000000000020D /* ConfiguracionView.swift in Sources */,
 				AF000000000000000000020E /* ExportService.swift in Sources */,
 				AF000000000000000000020F /* RecurringService.swift in Sources */,
+				AF0000000000000000000231 /* OverlayCapas.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
