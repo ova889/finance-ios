@@ -69,7 +69,8 @@ private struct PanelDropdown: View {
                 opciones
             }
         }
-        .frame(width: anchoPanel, minHeight: 0, maxHeight: altoFilas > altoPanel ? altoPanel : .infinity)
+        .frame(width: anchoPanel)
+        .frame(minHeight: 0, maxHeight: altoFilas > altoPanel ? altoPanel : .infinity)
         .padding(6)
         .background(Color.black.opacity(0.85))
         .vidrio(saturacion: 1.8)
