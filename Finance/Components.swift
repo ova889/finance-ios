@@ -49,7 +49,7 @@ struct DoughnutChart: View {
         VStack(spacing: 12) {
             GeometryReader { geo in
                 let diametro = min(geo.size.width, geo.size.height)
-                let ancho = diametro * 0.14
+                let ancho = diametro * 0.10
                 let gap = 0.0035
                 ZStack {
                     Circle()
@@ -82,7 +82,7 @@ struct DoughnutChart: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .animation(.timingCurve(0.0, 0.0, 0.58, 1.0, duration: 0.8), value: avanzado)
             }
-            .frame(height: 190)
+            .frame(height: 150)
 
             VStack(spacing: 0) {
                 ForEach(Array(slices.enumerated()), id: \.element.id) { indice, slice in

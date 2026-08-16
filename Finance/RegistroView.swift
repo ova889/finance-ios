@@ -98,7 +98,7 @@ struct RegistroView: View {
                                 .font(Fuente(16))
                                 .focused($descripcionEnfocada)
                                 .padding(.horizontal, 16)
-                                .frame(height: 48)
+                                .frame(height: 36)
                                 .bordeCampo(enfocado: descripcionEnfocada)
                         }
                         .padding(.bottom, 18)
@@ -112,7 +112,7 @@ struct RegistroView: View {
                                 .datePickerStyle(.compact)
                                 .colorScheme(.dark)
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 48)
+                                .frame(height: 36)
                                 .padding(.horizontal, 16)
                                 .bordeCampo()
                                 .tint(Colores.accent)
@@ -199,7 +199,7 @@ struct ChipTipo: View {
                 .kerning(1)
                 .foregroundColor(colorFrente)
                 .frame(maxWidth: .infinity)
-                .frame(height: 48)
+                .frame(height: 36)
                 .background(colorFondo)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)

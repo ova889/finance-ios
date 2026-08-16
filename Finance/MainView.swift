@@ -212,8 +212,8 @@ VStack(spacing: 0) {
         .background {
             RoundedRectangle(cornerRadius: 30, style: .continuous)
                 .fill(.ultraThinMaterial)
-                .saturation(1.5)
-                .blur(radius: 8)
+                .saturation(2.2)
+                .blur(radius: 6)
         }
         .clipShape(Capsule())
         .overlay(Capsule().stroke(Color.white.opacity(0.35), lineWidth: 1))

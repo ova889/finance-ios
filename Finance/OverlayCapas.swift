@@ -79,9 +79,9 @@ private struct PanelDropdown: View {
         .shadow(color: .black.opacity(0.6), radius: 40, y: 12)
         .position(
             x: pedido.alinearDerecha ? pedido.origen.maxX - anchoPanel / 2 : pedido.origen.minX + anchoPanel / 2,
-            y: sube ? pedido.origen.minY - altoPanel / 2 - 6 : pedido.origen.maxY + altoPanel / 2 + 6
+            y: sube ? max(pedido.origen.minY - altoPanel / 2 - 6, 20) : pedido.origen.maxY + altoPanel / 2 + 6
         )
-        .transition(.opacity.combined(with: .offset(y: sube ? -8 : 8)))
+        .transition(.opacity.combined(with: .offset(y: sube ? -4 : 4)))
     }
 
     @ViewBuilder
@@ -104,7 +104,7 @@ private struct PanelDropdown: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .frame(height: 40)
+                .frame(height: 36)
                 .contentShape(Rectangle())
             }
             .buttonStyle(PressStyle(escala: 0.97))

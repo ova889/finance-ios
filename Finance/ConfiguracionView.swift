@@ -118,7 +118,7 @@ struct ConfiguracionView: View {
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
-                    .frame(height: 40)
+                    .frame(height: 32)
                     .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.2), lineWidth: 1))
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
@@ -160,7 +160,7 @@ struct ConfiguracionView: View {
                     }
                     .foregroundColor(Colores.rojo)
                     .padding(.horizontal, 16)
-                    .frame(height: 40)
+                    .frame(height: 32)
                     .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Colores.rojo.opacity(0.3), lineWidth: 1))
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
