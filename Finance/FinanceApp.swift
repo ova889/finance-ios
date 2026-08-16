@@ -5,6 +5,7 @@ import SwiftData
 struct FinanceApp: App {
     let container: ModelContainer
     @StateObject private var session = Session()
+    @StateObject private var capas = OverlayCapas()
 
     init() {
         do {
@@ -18,6 +19,7 @@ struct FinanceApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(session)
+                .environmentObject(capas)
                 .preferredColorScheme(.dark)
         }
         .modelContainer(container)

@@ -484,6 +484,7 @@ struct EditarMovimientoSheet: View {
         .presentationDetents([.large])
         .presentationBackground(Color(red: 0.06, green: 0.06, blue: 0.07))
         .preferredColorScheme(.dark)
+        .overlay { DropdownHost() }
     }
 
     private func guardar() {

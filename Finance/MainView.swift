@@ -51,7 +51,8 @@ struct MainView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
-            barraNavegacion
+barraNavegacion
+            DropdownHost()
         }
         .preferredColorScheme(.dark)
         .onAppear { latido = true }

@@ -85,40 +85,42 @@ struct CristalCard<Contenido: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, paddingHorizontal ?? padding)
             .padding(.vertical, padding)
-            .background(Colores.cardBg.opacity(0.55))
-            .overlay(Color.black.opacity(0.55).allowsHitTesting(false))
-            .overlay(alignment: .topLeading) {
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white.opacity(0.06), .clear]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .allowsHitTesting(false)
-            }
-            .overlay(alignment: .top) {
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white.opacity(0.12), Color.white.opacity(0.04)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 1)
-                .allowsHitTesting(false)
-            }
-            .overlay(alignment: .bottom) {
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white.opacity(0.04), Color.white.opacity(0.0)]),
-                    startPoint: .bottom,
-                    endPoint: .top
-                )
-                .frame(height: 1)
-                .allowsHitTesting(false)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
-            .overlay(
+            .background {
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .stroke(Color.white.opacity(0.04), lineWidth: 1)
-            )
-            .shadow(color: .black.opacity(0.4), radius: 32, x: 0, y: 8)
+                    .fill(Colores.cardBg.opacity(0.55))
+                    .overlay(Color.black.opacity(0.55).allowsHitTesting(false))
+                    .overlay(alignment: .topLeading) {
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.white.opacity(0.06), .clear]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        .allowsHitTesting(false)
+                    }
+                    .overlay(alignment: .top) {
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.white.opacity(0.12), Color.white.opacity(0.04)]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 1)
+                        .allowsHitTesting(false)
+                    }
+                    .overlay(alignment: .bottom) {
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.white.opacity(0.04), Color.white.opacity(0.0)]),
+                            startPoint: .bottom,
+                            endPoint: .top
+                        )
+                        .frame(height: 1)
+                        .allowsHitTesting(false)
+                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: radius, style: .continuous)
+                            .stroke(Color.white.opacity(0.04), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.4), radius: 32, x: 0, y: 8)
+            }
     }
 }
 
@@ -166,6 +168,8 @@ struct VistaDropdown: View {
     var margenInferior: CGFloat = 18
 
     @State private var abierto = false
+    @State private var miId = UUID()
+    @EnvironmentObject private var capas: OverlayCapas
 
     private var altura: CGFloat { compacto ? 32 : DesignTokens.campoAltura }
 
@@ -195,55 +199,36 @@ struct VistaDropdown: View {
                 .bordeCampo(enfocado: abierto)
             }
             .buttonStyle(PressStyle(escala: 0.98))
-            .overlay(alignment: alinearDerecha ? .topTrailing : .topLeading) {
-                if abierto {
-                    ZStack(alignment: alinearDerecha ? .topTrailing : .topLeading) {
-                        Color.black.opacity(0.001)
-                            .ignoresSafeArea()
-                            .onTapGesture { abierto = false }
-                        panel
-                            .padding(.top, altura + 6)
-                            .transition(.opacity.combined(with: .offset(y: -8)))
-                    }
+            .background(
+                GeometryReader { geo in
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onChange(of: abierto) { _, nuevo in
+                            if nuevo {
+                                capas.presentar(OverlayCapas.Pedido(
+                                    id: miId,
+                                    opciones: opciones,
+                                    seleccion: seleccion,
+                                    onSeleccionar: { op in
+                                        seleccion = op
+                                        abierto = false
+                                    },
+                                    origen: geo.frame(in: .global),
+                                    ancho: ancho ?? 220,
+                                    alinearDerecha: alinearDerecha
+                                ))
+                            } else {
+                                capas.cerrar(siEs: miId)
+                            }
+                        }
                 }
-            }
+            )
             .padding(.bottom, margenInferior)
         }
-        .animation(.easeOut(duration: 0.15), value: abierto)
-    }
-
-    private var panel: some View {
-        VStack(spacing: 0) {
-            ForEach(opciones, id: \.self) { op in
-                Button {
-                    seleccion = op
-                    abierto = false
-                } label: {
-                    HStack(spacing: 10) {
-                        Text(op)
-                            .font(Fuente(13, op == seleccion ? .semibold : .regular))
-                            .foregroundColor(op == seleccion ? .white : .white.opacity(0.7))
-                        Spacer()
-                        if op == seleccion {
-                            Image(systemName: "checkmark")
-                                .font(Fuente(11, .semibold))
-                                .foregroundColor(.white.opacity(0.7))
-                        }
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(PressStyle(escala: 0.97))
-            }
+        .onChange(of: capas.pedido?.id) { _, nuevoId in
+            if abierto && nuevoId != miId { abierto = false }
         }
-        .frame(width: max(ancho ?? 220, 200))
-        .padding(6)
-        .background(Color.black.opacity(0.85))
-        .vidrio(saturacion: 1.8)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
-        .shadow(color: .black.opacity(0.6), radius: 40, y: 12)
+        .animation(.easeOut(duration: 0.15), value: abierto)
     }
 }
 
