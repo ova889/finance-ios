@@ -5,6 +5,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -57,6 +59,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.HazeSource
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -75,6 +82,7 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
     var toast by remember { mutableStateOf<String?>(null) }
     var toastTipo by remember { mutableStateOf(TipoToast.EXITO) }
     val scope = rememberCoroutineScope()
+    val hazeState = remember { HazeState() }
 
     LaunchedEffect(estado) {
         estado.recargar()
@@ -107,13 +115,14 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
         Modifier
             .fillMaxSize()
     ) {
-        FondoGradiente()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .scale(escalaContenido)
-                .imePadding()
-        ) {
+        HazeSource(state = hazeState, zIndex = 0f) {
+            FondoGradiente()
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .scale(escalaContenido)
+                    .imePadding()
+            ) {
             topBar(
                 balance = estado.saldo(),
                 latido = pulsoLatido,
@@ -152,11 +161,13 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
                     }
                 }
             }
+            }
         }
 
         barraNavegacion(
             tab = tab,
-            onTab = { tab = it }
+            onTab = { tab = it },
+            hazeState = hazeState
         )
 
         toast?.let {
@@ -315,7 +326,7 @@ private fun topBar(
 private fun barraNavegacion(
     tab: TabPrincipal,
     onTab: (TabPrincipal) -> Unit,
-    modifier: Modifier = Modifier
+    hazeState: HazeState
 ) {
     val dyTotal = remember { mutableStateOf(0f) }
     val offsetY = remember { Animatable(0f) }
@@ -323,11 +334,12 @@ private fun barraNavegacion(
     val haptico = LocalHapticFeedback.current
 
     BoxWithConstraints(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .widthIn(max = 480.dp)
             .align(Alignment.BottomCenter)
             .padding(horizontal = 12.dp)
+            .navigationBarsPadding()
             .padding(bottom = 24.dp)
     ) {
         Box(
@@ -361,9 +373,15 @@ private fun barraNavegacion(
                         spotColor = Color.Black.copy(alpha = 0.35f),
                         ambientColor = Color.Black.copy(alpha = 0.35f)
                     )
-                    .vidrioNav()
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeStyle(
+                            backgroundColor = Color.Black.copy(alpha = 0.55f),
+                            tint = HazeTint(Color.Black.copy(alpha = 0.2f)),
+                            blurRadius = 24.dp
+                        )
+                    )
                     .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.6f))
                     .border(1.dp, Color.White.copy(alpha = 0.12f), CircleShape)
             ) {
                 Box(
@@ -386,7 +404,12 @@ private fun barraNavegacion(
                 ) {
                     TabPrincipal.entries.forEach { item ->
                         val activo = tab == item
-                        val iconColor = if (activo) Color.White else Color.White.copy(alpha = 0.55f)
+                        val esMas = item == TabPrincipal.REGISTRO
+                        val iconColor = when {
+                            activo -> Color.White
+                            esMas -> Color.White.copy(alpha = 0.85f)
+                            else -> Color.White.copy(alpha = 0.55f)
+                        }
                         val escalaIcono by animateFloatAsState(
                             if (activo) 1f else 0.92f,
                             spring(dampingRatio = 0.66f, stiffness = Spring.StiffnessLow),
@@ -394,15 +417,22 @@ private fun barraNavegacion(
                         )
                         Box(
                             Modifier
-                                .size(38.dp)
+                                .size(if (esMas) 38.dp else 38.dp)
                                 .clip(CircleShape)
+                                .then(
+                                    if (esMas) {
+                                        Modifier.background(Color.White.copy(alpha = if (activo) 0.28f else 0.14f))
+                                    } else {
+                                        Modifier
+                                    }
+                                )
                                 .clickable {
                                     haptico.performHapticFeedback(HapticFeedbackType.LongPress)
                                     onTab(item)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            if (activo) {
+                            if (activo && !esMas) {
                                 Box(
                                     Modifier
                                         .matchParentSize()
