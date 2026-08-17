@@ -15,9 +15,9 @@ class AppState(val ctx: Context, val userId: String) {
     var privacidad by mutableStateOf(Prefs.privacidad(ctx))
         private set
 
-    fun setPrivacidad(valor: Boolean) {
-        privacidad = valor
-        Prefs.setPrivacidad(ctx, valor)
+    fun togglePrivacidad() {
+        privacidad = !privacidad
+        Prefs.setPrivacidad(ctx, privacidad)
     }
 
     fun recargar() {

@@ -58,7 +58,7 @@ fun ConfiguracionScreen(estado: AppState, onSalir: () -> Unit) {
                 texto = "Privacy Mode",
                 subtitulo = "Blurs all amounts on screen",
                 activo = estado.privacidad,
-                onCambiar = { estado.setPrivacidad(!estado.privacidad) }
+                onCambiar = { estado.togglePrivacidad() }
             )
         }
 
