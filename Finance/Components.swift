@@ -49,7 +49,7 @@ struct DoughnutChart: View {
         VStack(spacing: 12) {
             GeometryReader { geo in
                 let diametro = min(geo.size.width, geo.size.height)
-                let ancho = diametro * 0.07
+                let ancho = diametro * 0.05
                 let gap = 0.0035
                 ZStack {
                     Circle()

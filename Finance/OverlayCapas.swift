@@ -61,23 +61,17 @@ struct DropdownHost: View {
 
         var body: some View {
             let altoFilas = CGFloat(pedido.opciones.count) * altoFila + 12
-            let altoPanel = min(altoFilas, altoMaximo)
+            let altoPanel = min(max(altoFilas, altoFila + 12), altoMaximo)
             let sube = pedido.origen.maxY + altoPanel + 12 > altoPantalla - 40
             let yBase = sube ? pedido.origen.minY - altoPanel - 6 : pedido.origen.maxY + 6
             let yClamped = max(min(yBase, altoPantalla - altoPanel - 10), 10)
             let xCentro = pedido.alinearDerecha ? pedido.origen.maxX - anchoPanel / 2 : pedido.origen.minX + anchoPanel / 2
             let xClamped = max(min(xCentro, anchoPantalla - anchoPanel / 2 - 10), anchoPanel / 2 + 10)
-            VStack(spacing: 0) {
-                if altoFilas > altoPanel {
-                    ScrollView(showsIndicators: false) {
-                        opciones
-                    }
-                } else {
-                    opciones
-                }
+            ScrollView(showsIndicators: false) {
+                opciones
             }
             .frame(width: anchoPanel)
-            .frame(minHeight: 0, maxHeight: altoFilas > altoPanel ? altoPanel : .infinity)
+            .frame(height: altoPanel)
             .padding(6)
             .background(Color.black.opacity(0.85))
             .vidrio(saturacion: 1.8)
