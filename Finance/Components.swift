@@ -65,12 +65,12 @@ struct DoughnutChart: View {
                     }
                     VStack(spacing: 4) {
                         Text("TOTAL GASTADO")
-                            .font(Fuente(9, .semibold))
-                            .kerning(0.8)
-                            .foregroundColor(Colores.textoSec.opacity(0.7))
+                            .font(Fuente(8, .medium))
+                            .kerning(1)
+                            .foregroundColor(Colores.textoSec.opacity(0.6))
                         MontoPrivado(
                             texto: formatoMonto(total),
-                            fuente: .system(size: 28, weight: .bold, design: .rounded)
+                            fuente: .system(size: 23, weight: .light, design: .rounded)
                         )
                         .foregroundColor(.white)
                         .monospacedDigit()

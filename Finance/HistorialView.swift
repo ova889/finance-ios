@@ -283,15 +283,20 @@ struct HistorialView: View {
         .padding(14)
         .background(
             ZStack {
-                Colores.cardBg.opacity(0.55)
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.white.opacity(0.06), .clear, .clear]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(Colores.cardBg.opacity(0.55))
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(Color.black.opacity(0.4))
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.white.opacity(0.06), .clear]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             }
         )
-        .vidrio()
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(Color.white.opacity(0.04), lineWidth: 1))
         .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))

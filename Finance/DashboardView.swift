@@ -202,18 +202,18 @@ struct DashboardView: View {
 
     private var slicesDoughnut: [DoughnutSlice] {
         let colores: [Color] = [
-            Colores.verde,
-            Colores.accent,
-            Colores.rojo,
-            Color(red: 0.98, green: 0.82, blue: 0.36),
-            Color(red: 0.35, green: 0.78, blue: 0.98),
-            Color(red: 0.96, green: 0.61, blue: 0.87),
-            Color(red: 0.62, green: 0.55, blue: 0.98),
-            Color(red: 0.96, green: 0.65, blue: 0.42),
-            Color(red: 0.49, green: 0.89, blue: 0.78),
-            Color(red: 0.89, green: 0.49, blue: 0.68),
-            Color(red: 0.56, green: 0.72, blue: 0.96),
-            Color(red: 0.76, green: 0.76, blue: 0.82)
+            .white,
+            Color(white: 0.82),
+            Color(white: 0.64),
+            Color(white: 0.55),
+            Color(white: 0.42),
+            Color(white: 0.30),
+            Color(white: 0.22),
+            Color(white: 0.16),
+            Color(white: 0.12),
+            Color(white: 0.09),
+            Color(white: 0.07),
+            Color(white: 0.05)
         ]
         return gastosPorCategoria.enumerated().map { idx, item in
             DoughnutSlice(

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import LocalAuthentication
 
 enum TabPrincipal: String, CaseIterable {
     case dashboard = "Dashboard"
@@ -18,6 +19,9 @@ struct MainView: View {
     @State private var latido = false
     @State private var splash = true
     @State private var pulso = false
+    @State private var arrastreY: CGFloat = 0
+    @State private var bloqueada = false
+    @Environment(\.scenePhase) private var scenePhase
     @Namespace private var navEspacio
     @Query private var movimientos: [Movimiento]
 
@@ -64,6 +68,13 @@ VStack(spacing: 0) {
                     .ignoresSafeArea()
                     .transition(.opacity)
             }
+
+            if bloqueada {
+                pantallaBloqueo
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                    .zIndex(2000)
+            }
         }
         .preferredColorScheme(.dark)
         .onAppear {
@@ -75,6 +86,78 @@ VStack(spacing: 0) {
                     withAnimation(.easeOut(duration: 0.5)) {
                         splash = false
                     }
+                }
+            }
+        }
+        .onChange(of: scenePhase) { _, nueva in
+            switch nueva {
+            case .background, .inactive:
+                if !bloqueada && laBiometriaDisponible() {
+                    bloqueada = true
+                }
+            case .active:
+                if bloqueada {
+                    autenticar()
+                }
+            default:
+                break
+            }
+        }
+    }
+
+    private var pantallaBloqueo: some View {
+        ZStack {
+            Fondo.gradiente
+            VStack(spacing: 14) {
+                IconoW()
+                    .foregroundStyle(Color.white)
+                    .frame(width: 38, height: 38)
+                Text("FINANCE")
+                    .font(Fuente(18, .bold))
+                    .kerning(6)
+                    .foregroundColor(.white)
+                Text("Locked")
+                    .font(Fuente(12))
+                    .foregroundColor(.white.opacity(0.4))
+                Button {
+                    autenticar()
+                } label: {
+                    Image(systemName: "faceid")
+                        .font(Fuente(28))
+                        .foregroundColor(.white.opacity(0.6))
+                        .frame(width: 64, height: 64)
+                        .background(Color.white.opacity(0.06))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(PressStyle(escala: 0.92))
+                .padding(.top, 8)
+            }
+        }
+        .background(Color.black)
+    }
+
+    private func laBiometriaDisponible() -> Bool {
+        let contexto = LAContext()
+        var error: NSError?
+        return contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+    }
+
+    private func autenticar() {
+        let contexto = LAContext()
+        var error: NSError?
+        guard contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+            withAnimation(.easeOut(duration: 0.3)) {
+                bloqueada = false
+            }
+            return
+        }
+        contexto.evaluatePolicy(
+            .deviceOwnerAuthenticationWithBiometrics,
+            localizedReason: "Unlock Wayne Finance"
+        ) { exito, _ in
+            DispatchQueue.main.async {
+                withAnimation(.easeOut(duration: 0.35)) {
+                    bloqueada = !exito
                 }
             }
         }
@@ -222,22 +305,35 @@ VStack(spacing: 0) {
         .compositingGroup()
         .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
         .shadow(color: .black.opacity(0.35), radius: 24, x: 0, y: 12)
+        .offset(y: arrastreY)
+        .gesture(
+            DragGesture()
+                .onChanged { valor in
+                    let dy = valor.translation.height
+                    arrastreY = dy < 0 ? dy * 0.25 : dy * 0.45
+                }
+                .onEnded { _ in
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                        arrastreY = 0
+                    }
+                }
+        )
         .padding(.bottom, 24)
     }
 
     private var barraCristal: some View {
         ZStack {
             Capsule()
-                .fill(Color.black.opacity(0.8))
+                .fill(Color.black.opacity(0.75))
             Capsule()
                 .fill(.ultraThinMaterial)
-                .opacity(0.4)
+                .opacity(0.55)
             Capsule()
-                .fill(Colores.accent.opacity(0.07))
+                .fill(Colores.accent.opacity(0.06))
             Capsule()
                 .fill(
                     LinearGradient(
-                        colors: [Color.white.opacity(0.10), .clear],
+                        colors: [Color.white.opacity(0.08), .clear],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
@@ -246,6 +342,7 @@ VStack(spacing: 0) {
                 .blendMode(.overlay)
                 .allowsHitTesting(false)
         }
+        .environment(\.colorScheme, .dark)
     }
 
     private func activarPanico() {
