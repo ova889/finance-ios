@@ -40,6 +40,7 @@ fun ConfiguracionScreen(estado: AppState, onSalir: () -> Unit) {
     var textoPendientes by remember { mutableStateOf("No pending operations") }
     var etapaAlerta by remember { mutableIntStateOf(0) }
     var cargado by remember { mutableStateOf(false) }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
 
     LaunchedEffect(Unit) { cargado = true }
 
@@ -76,7 +77,7 @@ fun ConfiguracionScreen(estado: AppState, onSalir: () -> Unit) {
                         .clip(RoundedCornerShape(14.dp))
                         .clickable {
                             textoPendientes = "All operations synced"
-                            androidx.compose.runtime.rememberCoroutineScope().launch {
+                            scope.launch {
                                 delay(2000)
                                 textoPendientes = "No pending operations"
                             }

@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,7 @@ object Colores {
     val accent = Color(0xFF5E5CE6)
     val textoSec = Color(0xFF8E8E93)
     val cardBg = Color(0xFF08080C)
+    val campoBg = Color(0xFF16161A)
 }
 
 object Fondo {
@@ -140,11 +142,11 @@ fun CampoWayne(
 @Composable
 fun BtnWayne(
     texto: String,
-    accion: () -> Unit,
     pequeno: Boolean = false,
     modifier: Modifier = Modifier,
     colorTexto: Color = Color.White,
-    colorBorde: Color = Color.White.copy(alpha = 0.2f)
+    colorBorde: Color = Color.White.copy(alpha = 0.2f),
+    accion: () -> Unit
 ) {
     val interaccion = remember { MutableInteractionSource() }
     val presionado by interaccion.collectIsPressedAsState()

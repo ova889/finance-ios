@@ -38,8 +38,10 @@ fun IconoGrid(mod: Modifier = Modifier, color: Color = Color.White, grosor: Floa
         val path = Path()
         for ((x, y) in listOf(3f to 3f, 14f to 3f, 3f to 14f, 14f to 14f)) {
             path.addRoundRect(
-                Rect(Offset(x * s, y * s), Size(7 * s, 7 * s)),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(1 * s, 1 * s)
+                androidx.compose.ui.geometry.RoundRect(
+                    Rect(Offset(x * s, y * s), Size(7 * s, 7 * s)),
+                    androidx.compose.ui.geometry.CornerRadius(1 * s, 1 * s)
+                )
             )
         }
         drawPath(path, color, style = Stroke(width = grosor * s, cap = StrokeCap.Round, join = StrokeJoin.Round))

@@ -59,7 +59,7 @@ object Categorias {
         "Housing", "Groceries", "Food", "Transportation", "Subscriptions",
         "Health", "Entertainment", "Clothing", "Education", "Utilities"
     )
-    fun lista(para tipo: String): List<String> = if (tipo == "ingreso") ingreso else gasto
+    fun lista(tipo: String): List<String> = if (tipo == "ingreso") ingreso else gasto
 }
 
 object Db {

@@ -291,9 +291,11 @@ private fun barraNavegacion(
                     onDrag = { cambio, cantidad ->
                         cambio.consume()
                         dyTotal.value += cantidad.y
-                        offsetY.snapTo(
-                            if (dyTotal.value < 0) dyTotal.value * 0.25f else dyTotal.value * 0.45f
-                        )
+                        scope.launch {
+                            offsetY.snapTo(
+                                if (dyTotal.value < 0) dyTotal.value * 0.25f else dyTotal.value * 0.45f
+                            )
+                        }
                     },
                     onDragEnd = { volver(scope, offsetY, dyTotal) },
                     onDragCancel = { volver(scope, offsetY, dyTotal) }

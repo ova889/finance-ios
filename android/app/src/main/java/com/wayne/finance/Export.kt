@@ -127,9 +127,10 @@ object ExportService {
         )
 
         doc.finishPage(page)
-        val bytes = doc.openDocument().use { it.readBytes() }
+        val bos = java.io.ByteArrayOutputStream()
+        doc.writeTo(bos)
         doc.close()
-        return escribir(context, "wayne_finance_history.pdf", bytes)
+        return escribir(context, "wayne_finance_history.pdf", bos.toByteArray())
     }
 
     fun compartir(context: Context, resultado: Resultado, tipoMime: String) {

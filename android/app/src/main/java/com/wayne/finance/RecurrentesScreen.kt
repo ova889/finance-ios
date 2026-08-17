@@ -91,11 +91,11 @@ fun RecurrentesScreen(estado: AppState, onCerrar: () -> Unit) {
             CristalCard(padding = 16.dp) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        ChipTipo("INCOME", tipo == "ingreso", estiloRojo = false, Modifier.weight(1f)) {
+                        ChipTipo("INCOME", tipo == "ingreso", estiloRojo = false, mod = Modifier.weight(1f)) {
                             tipo = "ingreso"
                             categoria = Categorias.lista("ingreso")[0]
                         }
-                        ChipTipo("EXPENSE", tipo == "gasto", estiloRojo = true, Modifier.weight(1f)) {
+                        ChipTipo("EXPENSE", tipo == "gasto", estiloRojo = true, mod = Modifier.weight(1f)) {
                             tipo = "gasto"
                             categoria = Categorias.lista("gasto")[0]
                         }

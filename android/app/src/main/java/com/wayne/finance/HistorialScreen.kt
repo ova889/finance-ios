@@ -285,7 +285,7 @@ private fun FilaMovimiento(
             Row(
                 Modifier
                     .fillMaxSize()
-                    .padding(end = 10.dp, vertical = 10.dp),
+                    .padding(top = 10.dp, end = 10.dp, bottom = 10.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {

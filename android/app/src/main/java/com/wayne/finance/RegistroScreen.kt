@@ -1,6 +1,7 @@
 package com.wayne.finance
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -106,11 +108,11 @@ fun RegistroScreen(estado: AppState) {
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    ChipTipo("INCOME", tipo == "ingreso", estiloRojo = false, Modifier.weight(1f)) {
+                    ChipTipo("INCOME", tipo == "ingreso", estiloRojo = false, mod = Modifier.weight(1f)) {
                         tipo = "ingreso"
                         categoria = Categorias.lista("ingreso")[0]
                     }
-                    ChipTipo("EXPENSE", tipo == "gasto", estiloRojo = true, Modifier.weight(1f)) {
+                    ChipTipo("EXPENSE", tipo == "gasto", estiloRojo = true, mod = Modifier.weight(1f)) {
                         tipo = "gasto"
                         categoria = Categorias.lista("gasto")[0]
                     }
@@ -199,7 +201,7 @@ fun RegistroScreen(estado: AppState) {
 }
 
 private fun Modifier.borderMonto(enfocado: Boolean): Modifier = this.then(
-    androidx.compose.foundation.border(
+    Modifier.border(
         1.dp,
         if (enfocado) Colores.accent else Color.White.copy(alpha = 0.1f),
         RoundedCornerShape(18.dp)
@@ -207,5 +209,5 @@ private fun Modifier.borderMonto(enfocado: Boolean): Modifier = this.then(
 )
 
 private fun Modifier.focusableMonto(onCambio: (Boolean) -> Unit): Modifier = this.then(
-    androidx.compose.ui.focus.onFocusChanged { onCambio(it.isFocused) }
+    Modifier.onFocusChanged { onCambio(it.isFocused) }
 )

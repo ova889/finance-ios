@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.drawscope.rotate
 
 @Composable
 fun LandingScreen(onLanzar: () -> Unit) {
