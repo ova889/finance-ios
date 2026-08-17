@@ -37,7 +37,7 @@ struct DropdownHost: View {
                     Color.clear
                         .contentShape(Rectangle())
                         .onTapGesture { capas.cerrar() }
-                    PanelDropdown(pedido: pedido, altoPantalla: geo.size.height)
+                    PanelDropdown(pedido: pedido, altoPantalla: geo.size.height, anchoPantalla: geo.size.width)
                 }
                 .ignoresSafeArea()
                 .transition(.opacity)
@@ -48,41 +48,45 @@ struct DropdownHost: View {
     }
 }
 
-private struct PanelDropdown: View {
-    let pedido: OverlayCapas.Pedido
-    let altoPantalla: CGFloat
+    private struct PanelDropdown: View {
+        let pedido: OverlayCapas.Pedido
+        let altoPantalla: CGFloat
+        let anchoPantalla: CGFloat
 
-    @EnvironmentObject private var capas: OverlayCapas
+        @EnvironmentObject private var capas: OverlayCapas
 
-    private var anchoPanel: CGFloat { max(pedido.ancho, 200) }
+        private var anchoPanel: CGFloat { max(pedido.ancho, 200) }
+        private var altoFila: CGFloat { 36 }
+        private var altoMaximo: CGFloat { 240 }
 
-    var body: some View {
-        let altoFilas = CGFloat(pedido.opciones.count) * 40 + 12
-        let altoPanel = min(altoFilas, altoPantalla - 24)
-        let sube = pedido.origen.maxY + altoPanel + 24 > altoPantalla
-        VStack(spacing: 0) {
-            if altoFilas > altoPanel {
-                ScrollView(showsIndicators: false) {
+        var body: some View {
+            let altoFilas = CGFloat(pedido.opciones.count) * altoFila + 12
+            let altoPanel = min(altoFilas, altoMaximo)
+            let sube = pedido.origen.maxY + altoPanel + 12 > altoPantalla - 40
+            let yBase = sube ? pedido.origen.minY - altoPanel - 6 : pedido.origen.maxY + 6
+            let yClamped = max(min(yBase, altoPantalla - altoPanel - 10), 10)
+            let xCentro = pedido.alinearDerecha ? pedido.origen.maxX - anchoPanel / 2 : pedido.origen.minX + anchoPanel / 2
+            let xClamped = max(min(xCentro, anchoPantalla - anchoPanel / 2 - 10), anchoPanel / 2 + 10)
+            VStack(spacing: 0) {
+                if altoFilas > altoPanel {
+                    ScrollView(showsIndicators: false) {
+                        opciones
+                    }
+                } else {
                     opciones
                 }
-            } else {
-                opciones
             }
+            .frame(width: anchoPanel)
+            .frame(minHeight: 0, maxHeight: altoFilas > altoPanel ? altoPanel : .infinity)
+            .padding(6)
+            .background(Color.black.opacity(0.85))
+            .vidrio(saturacion: 1.8)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
+            .shadow(color: .black.opacity(0.6), radius: 40, y: 12)
+            .position(x: xClamped, y: yClamped + altoPanel / 2)
+            .transition(.opacity.combined(with: .offset(y: sube ? -4 : 4)))
         }
-        .frame(width: anchoPanel)
-        .frame(minHeight: 0, maxHeight: altoFilas > altoPanel ? altoPanel : .infinity)
-        .padding(6)
-        .background(Color.black.opacity(0.85))
-        .vidrio(saturacion: 1.8)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
-        .shadow(color: .black.opacity(0.6), radius: 40, y: 12)
-        .position(
-            x: pedido.alinearDerecha ? pedido.origen.maxX - anchoPanel / 2 : pedido.origen.minX + anchoPanel / 2,
-            y: sube ? max(pedido.origen.minY - altoPanel / 2 - 6, 20) : pedido.origen.maxY + altoPanel / 2 + 6
-        )
-        .transition(.opacity.combined(with: .offset(y: sube ? -4 : 4)))
-    }
 
     @ViewBuilder
     private var opciones: some View {

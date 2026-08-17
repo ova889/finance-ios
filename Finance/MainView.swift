@@ -189,49 +189,63 @@ VStack(spacing: 0) {
     }
 
     private var barraNavegacion: some View {
-        HStack(spacing: 22) {
+        HStack(spacing: 24) {
             ForEach(TabPrincipal.allCases, id: \.self) { item in
                 let activo = tab == item
                 Button {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    withAnimation(.spring(response: 0.38, dampingFraction: 0.78)) {
                         tab = item
                     }
                 } label: {
                     iconoNavegacion(item)
                         .frame(width: 22, height: 22)
-                        .frame(width: 46, height: 38)
-                        .scaleEffect(activo ? 1 : 0.94)
-                        .overlay(activo ? AnyView(capaActiva()) : AnyView(EmptyView()))
+                        .frame(width: 38, height: 38)
+                        .scaleEffect(activo ? 1 : 0.92)
+                        .overlay(
+                            Group {
+                                if activo {
+                                    Capsule()
+                                        .fill(Color.white.opacity(0.08))
+                                        .matchedGeometryEffect(id: "pill-activo", in: navEspacio)
+                                }
+                            }
+                        )
                         .contentShape(Capsule())
                 }
-                .buttonStyle(PressLiquido())
+                .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 14)
-        .frame(height: 64)
-        .background {
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .fill(.ultraThinMaterial)
-                .saturation(2.2)
-                .blur(radius: 6)
-        }
-        .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.35), lineWidth: 1))
-        .overlay(Capsule().inset(by: 0.5).stroke(Color.black.opacity(0.15), lineWidth: 0.5))
-        .overlay(alignment: .top) {
+        .padding(.horizontal, 16)
+        .frame(height: 52)
+        .background(barraCristal)
+        .compositingGroup()
+        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
+        .shadow(color: .black.opacity(0.35), radius: 24, x: 0, y: 12)
+        .padding(.bottom, 24)
+    }
+
+    private var barraCristal: some View {
+        ZStack {
             Capsule()
-                .fill(LinearGradient(
-                    colors: [Color.white.opacity(0.22), .clear],
-                    startPoint: .top, endPoint: .bottom
-                ))
-                .frame(height: 32)
+                .fill(Color.black.opacity(0.4))
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .saturation(1.8)
+            Capsule()
+                .fill(Colores.accent.opacity(0.06))
+            Capsule()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.12), .clear],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                )
+                .frame(height: 26)
                 .padding(.horizontal, 1)
                 .blendMode(.overlay)
                 .allowsHitTesting(false)
         }
-        .shadow(color: .black.opacity(0.3), radius: 32, y: 20)
-        .shadow(color: .black.opacity(0.2), radius: 8, y: 8)
-        .padding(.bottom, 24)
     }
 
     private func activarPanico() {

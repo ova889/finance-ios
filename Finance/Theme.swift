@@ -185,7 +185,7 @@ struct VistaDropdown: View {
             } label: {
                 HStack(spacing: 8) {
                     Text(seleccion)
-                        .font(Fuente(compacto ? 11 : 16))
+                        .font(Fuente(compacto ? 13 : 16))
                         .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "chevron.down")

@@ -66,7 +66,7 @@ struct RegistroView: View {
                         }
                         .padding(.bottom, 18)
 
-                        VistaDropdown(titulo: "Category", opciones: Categorias.lista(para: tipo), seleccion: $categoria)
+                        VistaDropdown(titulo: "Category", opciones: Categorias.lista(para: tipo), seleccion: $categoria, compacto: true)
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Description (optional)")

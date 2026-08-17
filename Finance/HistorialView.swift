@@ -162,12 +162,13 @@ struct HistorialView: View {
                     VistaDropdown(
                         opciones: ["All", "Income", "Expense"],
                         seleccion: $tipoFiltro,
+                        compacto: true,
                         margenInferior: 0
                     )
                     .frame(maxWidth: .infinity)
 
                     BtnWayne(texto: "Filter", pequeno: true) {}
-                        .frame(maxWidth: .infinity)
+                        .frame(width: 110)
 
                     BtnGhost(texto: "Clear") {
                         limpiarFiltros()
@@ -427,7 +428,8 @@ struct EditarMovimientoSheet: View {
                     VistaDropdown(
                         titulo: "Category",
                         opciones: Categorias.lista(para: movimiento.tipo),
-                        seleccion: $categoria
+                        seleccion: $categoria,
+                        compacto: true
                     )
 
                     VStack(alignment: .leading, spacing: 6) {
@@ -439,7 +441,7 @@ struct EditarMovimientoSheet: View {
                             .font(Fuente(16))
                             .focused($montoEnfocado)
                             .padding(.horizontal, 16)
-                            .frame(height: 48)
+                            .frame(height: 36)
                             .bordeCampo(enfocado: montoEnfocado)
                     }
                     .padding(.bottom, 18)
@@ -452,7 +454,7 @@ struct EditarMovimientoSheet: View {
                             .font(Fuente(16))
                             .focused($descripcionEnfocada)
                             .padding(.horizontal, 16)
-                            .frame(height: 48)
+                            .frame(height: 36)
                             .bordeCampo(enfocado: descripcionEnfocada)
                     }
                     .padding(.bottom, 18)
@@ -465,7 +467,7 @@ struct EditarMovimientoSheet: View {
                             .labelsHidden()
                             .datePickerStyle(.compact)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 48)
+                            .frame(height: 36)
                             .padding(.horizontal, 16)
                             .bordeCampo()
                             .tint(Colores.accent)

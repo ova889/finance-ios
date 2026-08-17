@@ -168,20 +168,10 @@ struct DashboardView: View {
                 opciones: mesesDisponibles,
                 seleccion: $mesSeleccionado,
                 compacto: true,
-                ancho: 130,
+                ancho: 120,
                 alinearDerecha: true,
                 margenInferior: 0
             )
-
-            let resumen = resumenMes
-            HStack(spacing: 8) {
-                MontoPrivado(texto: "+\(formatoMonto(resumen.inc))", fuente: Fuente(10, .semibold))
-                    .foregroundColor(Colores.verde)
-                MontoPrivado(texto: "-\(formatoMonto(resumen.exp))", fuente: Fuente(10, .semibold))
-                    .foregroundColor(Colores.rojo)
-                MontoPrivado(texto: formatoMonto(resumen.bal), fuente: Fuente(10, .semibold))
-                    .foregroundColor(resumen.bal >= 0 ? Colores.verde : Colores.rojo)
-            }
         }
     }
 
