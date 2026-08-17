@@ -7,9 +7,11 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -47,6 +50,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -90,12 +95,19 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
         infiniteRepeatable(tween(1100), RepeatMode.Reverse),
         label = "lat"
     )
+    val transicionSplash = rememberInfiniteTransition(label = "splash")
+    val pulsoLogo by transicionSplash.animateFloat(
+        initialValue = 0.96f,
+        targetValue = 1.06f,
+        animationSpec = infiniteRepeatable(tween(800), RepeatMode.Reverse),
+        label = "logo"
+    )
 
     Box(
         Modifier
             .fillMaxSize()
-            .background(Fondo.gradientePantalla)
     ) {
+        FondoGradiente()
         Column(
             Modifier
                 .fillMaxSize()
@@ -126,21 +138,25 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
                     .fillMaxSize()
                     .weight(1f)
             ) {
-                when (tab) {
-                    TabPrincipal.DASHBOARD -> DashboardScreen(estado)
-                    TabPrincipal.HISTORIAL -> HistorialScreen(estado)
-                    TabPrincipal.REGISTRO -> RegistroScreen(estado)
-                    TabPrincipal.CONFIGURACION -> ConfiguracionScreen(estado, onSalir)
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .widthIn(max = 560.dp)
+                        .align(Alignment.TopCenter)
+                ) {
+                    when (tab) {
+                        TabPrincipal.DASHBOARD -> DashboardScreen(estado)
+                        TabPrincipal.HISTORIAL -> HistorialScreen(estado)
+                        TabPrincipal.REGISTRO -> RegistroScreen(estado)
+                        TabPrincipal.CONFIGURACION -> ConfiguracionScreen(estado, onSalir)
+                    }
                 }
             }
         }
 
         barraNavegacion(
             tab = tab,
-            onTab = { tab = it },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp)
+            onTab = { tab = it }
         )
 
         toast?.let {
@@ -164,7 +180,18 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    IconoW(Modifier.size(46.dp))
+                    IconoW(
+                        Modifier
+                            .size(46.dp)
+                            .scale(pulsoLogo)
+                            .shadow(
+                                20.dp,
+                                CircleShape,
+                                clip = false,
+                                spotColor = Color.White.copy(alpha = 0.3f),
+                                ambientColor = Color.White.copy(alpha = 0.3f)
+                            )
+                    )
                     Spacer(Modifier.height(16.dp))
                     androidx.compose.material3.Text(
                         "FINANCE",
@@ -173,11 +200,18 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
                         letterSpacing = 7.sp,
                         color = Color.White
                     )
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(12.dp))
                     Box(
                         Modifier
                             .height(2.dp)
                             .width(40.dp)
+                            .shadow(
+                                8.dp,
+                                CircleShape,
+                                clip = false,
+                                spotColor = Colores.accent.copy(alpha = 0.5f),
+                                ambientColor = Colores.accent.copy(alpha = 0.5f)
+                            )
                             .background(Colores.accent)
                     )
                     Box(Modifier.size(1.dp))
@@ -195,72 +229,85 @@ private fun topBar(
     onTitulo: () -> Unit,
     onSalir: () -> Unit
 ) {
-    Row(
+    Box(
         Modifier
             .fillMaxWidth()
             .background(Color.Black.copy(alpha = 0.55f))
             .statusBarsPadding()
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            Modifier.clickable { onTitulo() },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            IconoW(Modifier.size(16.dp), opacidad = 0.5f)
-            androidx.compose.material3.Text(
-                "FINANCE",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.5.sp,
-                color = Color.White.copy(alpha = 0.45f)
+            Row(
+                Modifier.clickable { onTitulo() },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                IconoW(Modifier.size(16.dp), opacidad = 0.5f)
+                androidx.compose.material3.Text(
+                    "FINANCE",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 1.5.sp,
+                    color = Color.White.copy(alpha = 0.45f)
+                )
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            MontoPrivado(
+                texto = formatoMonto(balance),
+                privacidad = privacidad,
+                fuente = 12,
+                peso = FontWeight.Bold,
+                tnum = true,
+                modifier = Modifier.padding(end = 8.dp)
             )
-        }
 
-        Spacer(Modifier.weight(1f))
-
-        MontoPrivado(
-            texto = formatoMonto(balance),
-            privacidad = privacidad,
-            fuente = 12,
-            peso = FontWeight.Bold,
-            modifier = Modifier.padding(end = 8.dp)
-        )
-
-        Box(
-            Modifier
-                .width(1.dp)
-                .height(14.dp)
-                .background(Color.White.copy(alpha = 0.06f))
-        )
-
-        Spacer(Modifier.width(8.dp))
-
-        Box(
-            Modifier
-                .size(6.dp)
-                .scale(latido)
-                .clip(CircleShape)
-                .background(Colores.verde)
-        )
-
-        Spacer(Modifier.width(10.dp))
-
-        Box(
-            Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .clickable { onSalir() }
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-        ) {
-            androidx.compose.material3.Text(
-                "Sign Out",
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
-                letterSpacing = 0.3.sp,
-                color = Colores.rojo
+            Box(
+                Modifier
+                    .width(1.dp)
+                    .height(14.dp)
+                    .background(Color.White.copy(alpha = 0.06f))
             )
+
+            Spacer(Modifier.width(8.dp))
+
+            Box(
+                Modifier
+                    .size(6.dp)
+                    .scale(latido)
+                    .clip(CircleShape)
+                    .background(Colores.verde)
+            )
+
+            Spacer(Modifier.width(10.dp))
+
+            Box(
+                Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onSalir() }
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                androidx.compose.material3.Text(
+                    "Sign Out",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    letterSpacing = 0.3.sp,
+                    color = Colores.rojo
+                )
+            }
         }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .align(Alignment.BottomCenter)
+                .background(Color.White.copy(alpha = 0.03f))
+        )
     }
 }
 
@@ -273,71 +320,104 @@ private fun barraNavegacion(
     val dyTotal = remember { mutableStateOf(0f) }
     val offsetY = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
-
-    val barraBase = Modifier
-        .fillMaxWidth()
-        .height(52.dp)
-        .shadow(24.dp, CircleShape, clip = false, spotColor = Color.Black.copy(alpha = 0.35f), ambientColor = Color.Black.copy(alpha = 0.35f))
-        .clip(CircleShape)
-        .background(Color.Black.copy(alpha = 0.6f))
+    val haptico = LocalHapticFeedback.current
 
     BoxWithConstraints(
         modifier = modifier
+            .fillMaxWidth()
+            .widthIn(max = 480.dp)
+            .align(Alignment.BottomCenter)
             .padding(horizontal = 12.dp)
-            .then(barraBase)
-            .offset { IntOffset(0, offsetY.value.roundToInt()) }
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDrag = { cambio, cantidad ->
-                        cambio.consume()
-                        dyTotal.value += cantidad.y
-                        scope.launch {
-                            offsetY.snapTo(
-                                if (dyTotal.value < 0) dyTotal.value * 0.25f else dyTotal.value * 0.45f
-                            )
-                        }
-                    },
-                    onDragEnd = { volver(scope, offsetY, dyTotal) },
-                    onDragCancel = { volver(scope, offsetY, dyTotal) }
-                )
-            }
+            .padding(bottom = 24.dp)
     ) {
-        val anchoItem = maxWidth / 4f
-        val barraX by animateDpAsState(
-            anchoItem * tab.indice,
-            spring(dampingRatio = 0.66f, stiffness = Spring.StiffnessLow),
-            label = "pill"
-        )
-
         Box(
             Modifier
-                .offset(x = barraX)
-                .size(width = anchoItem, height = 52.dp)
-                .clip(CircleShape)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color.White.copy(alpha = 0.28f), Color.White.copy(alpha = 0.10f))
+                .fillMaxWidth()
+                .offset { IntOffset(0, offsetY.value.roundToInt()) }
+                .pointerInput(dyTotal, offsetY) {
+                    detectDragGestures(
+                        onDrag = { cambio, cantidad ->
+                            cambio.consume()
+                            dyTotal.value += cantidad.y
+                            scope.launch {
+                                offsetY.snapTo(
+                                    if (dyTotal.value < 0) dyTotal.value * 0.25f else dyTotal.value * 0.45f
+                                )
+                            }
+                        },
+                        onDragEnd = { volver(scope, offsetY, dyTotal) },
+                        onDragCancel = { volver(scope, offsetY, dyTotal) }
                     )
-                )
-        )
-
-        Row(Modifier.fillMaxSize()) {
-            TabPrincipal.entries.forEach { item ->
-                val activo = tab == item
-                val iconColor = if (activo) Color.White else Color.White.copy(alpha = 0.55f)
+                }
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .shadow(
+                        24.dp,
+                        CircleShape,
+                        clip = false,
+                        spotColor = Color.Black.copy(alpha = 0.35f),
+                        ambientColor = Color.Black.copy(alpha = 0.35f)
+                    )
+                    .vidrioNav()
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.6f))
+                    .border(1.dp, Color.White.copy(alpha = 0.12f), CircleShape)
+            ) {
                 Box(
                     Modifier
-                        .weight(1f)
-                        .fillMaxSize()
-                        .clickable { onTab(item) },
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .height(22.dp)
+                        .align(Alignment.TopCenter)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color.White.copy(alpha = 0.09f), Color.Transparent)
+                            )
+                        )
+                )
+
+                Row(
+                    Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val tam = 22.dp
-                    when (item) {
-                        TabPrincipal.DASHBOARD -> IconoGrid(Modifier.size(tam), iconColor)
-                        TabPrincipal.HISTORIAL -> IconoReloj(Modifier.size(tam), iconColor)
-                        TabPrincipal.REGISTRO -> IconoMas(Modifier.size(tam), iconColor)
-                        TabPrincipal.CONFIGURACION -> IconoEngranaje(Modifier.size(tam), iconColor)
+                    TabPrincipal.entries.forEach { item ->
+                        val activo = tab == item
+                        val iconColor = if (activo) Color.White else Color.White.copy(alpha = 0.55f)
+                        val escalaIcono by animateFloatAsState(
+                            if (activo) 1f else 0.92f,
+                            spring(dampingRatio = 0.66f, stiffness = Spring.StiffnessLow),
+                            label = "icono"
+                        )
+                        Box(
+                            Modifier
+                                .size(38.dp)
+                                .clip(CircleShape)
+                                .clickable {
+                                    haptico.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    onTab(item)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (activo) {
+                                Box(
+                                    Modifier
+                                        .matchParentSize()
+                                        .clip(CircleShape)
+                                        .background(Color.White.copy(alpha = 0.08f))
+                                )
+                            }
+                            val tam = 22.dp
+                            when (item) {
+                                TabPrincipal.DASHBOARD -> IconoGrid(Modifier.size(tam).scale(escalaIcono), iconColor)
+                                TabPrincipal.HISTORIAL -> IconoReloj(Modifier.size(tam).scale(escalaIcono), iconColor)
+                                TabPrincipal.REGISTRO -> IconoMas(Modifier.size(tam).scale(escalaIcono), iconColor)
+                                TabPrincipal.CONFIGURACION -> IconoEngranaje(Modifier.size(tam).scale(escalaIcono), iconColor)
+                            }
+                        }
                     }
                 }
             }

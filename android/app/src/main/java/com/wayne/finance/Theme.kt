@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,11 +24,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.blurBehind
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlurredEdgeTreatment
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -38,6 +43,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.os.Build
+
+@OptIn(ExperimentalComposeUiApi::class)
+fun Modifier.vidrioNav(): Modifier = this.then(
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        Modifier.blurBehind(24.dp, BlurredEdgeTreatment.Unbounded)
+    } else {
+        Modifier
+    }
+)
 
 object Colores {
     val verde = Color(0xFF30D158)
@@ -46,14 +61,28 @@ object Colores {
     val textoSec = Color(0xFF8E8E93)
     val cardBg = Color(0xFF08080C)
     val campoBg = Color(0xFF16161A)
+    val borde = Color.White.copy(alpha = 0.10f)
+    val bordeCard = Color.White.copy(alpha = 0.04f)
+    val blancoSuave = Color.White.copy(alpha = 0.28f)
+}
+
+@Composable
+fun FondoGradiente(modifier: Modifier = Modifier) {
+    BoxWithConstraints(modifier.fillMaxSize()) {
+        val w = maxWidth.value
+        val h = maxHeight.value
+        val brush = remember(w, h) {
+            Brush.radialGradient(
+                colors = listOf(Color(0xFF0F0F10), Color(0xFF000000)),
+                center = Offset(w * 0.5f, -h * 0.1f),
+                radius = maxOf(w, h) * 1.15f
+            )
+        }
+        Box(Modifier.fillMaxSize().background(brush))
+    }
 }
 
 object Fondo {
-    val gradiente = Brush.radialGradient(
-        colors = listOf(Color(0xFF0F0F10), Color(0xFF000000)),
-        center = androidx.compose.ui.geometry.Offset(0.5f * 1080f, -0.1f * 1920f),
-        radius = 2800f
-    )
     val gradientePantalla = Brush.verticalGradient(
         colors = listOf(Color(0xFF0F0F10), Color(0xFF000000))
     )
@@ -68,16 +97,65 @@ fun CristalCard(
     content: @Composable () -> Unit
 ) {
     val forma = RoundedCornerShape(radius)
-    Column(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(elevation = 24.dp, shape = forma, clip = false, spotColor = Color.Black.copy(alpha = 0.4f), ambientColor = Color.Black.copy(alpha = 0.4f))
+            .shadow(
+                elevation = 32.dp,
+                shape = forma,
+                clip = false,
+                spotColor = Color.Black.copy(alpha = 0.4f),
+                ambientColor = Color.Black.copy(alpha = 0.4f)
+            )
             .clip(forma)
-            .background(Brush.linearGradient(listOf(Color(0xFF08080C), Color(0xFF060608))))
-            .border(1.dp, Color.White.copy(alpha = 0.04f), forma)
-            .padding(horizontal = paddingHorizontal ?: padding, vertical = padding)
     ) {
-        content()
+        Box(Modifier.matchParentSize().background(Colores.cardBg.copy(alpha = 0.55f)))
+        Box(Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.55f)))
+        Box(
+            Modifier
+                .matchParentSize()
+                .background(
+                    Brush.linearGradient(
+                        listOf(Color.White.copy(alpha = 0.06f), Color.Transparent),
+                        start = Offset(0f, 0f),
+                        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+                    )
+                )
+        )
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .align(Alignment.TopCenter)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.White.copy(alpha = 0.12f), Color.White.copy(alpha = 0.04f))
+                    )
+                )
+        )
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .align(Alignment.BottomCenter)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.White.copy(alpha = 0.04f), Color.Transparent)
+                    )
+                )
+        )
+        Box(
+            Modifier
+                .matchParentSize()
+                .border(1.dp, Colores.bordeCard, forma)
+        )
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = paddingHorizontal ?: padding, vertical = padding)
+        ) {
+            content()
+        }
     }
 }
 
@@ -248,6 +326,7 @@ fun MontoPrivado(
     fuente: Int = 15,
     peso: FontWeight = FontWeight.Bold,
     color: Color = Color.White,
+    tnum: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     androidx.compose.material3.Text(
@@ -255,6 +334,7 @@ fun MontoPrivado(
         fontSize = fuente.sp,
         fontWeight = peso,
         color = color,
+        fontFeatureSettings = if (tnum) "tnum" else null,
         modifier = modifier.blur(if (privacidad) 8.dp else 0.dp)
     )
 }

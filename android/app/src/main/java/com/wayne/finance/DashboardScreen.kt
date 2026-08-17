@@ -213,8 +213,13 @@ private fun DonaGrafica(categorias: List<Pair<String, Double>>) {
     val factor by animateFloatAsState(if (avanzado) 1f else 0f, tween(800), label = "dona")
 
     Column {
-        Box(Modifier.fillMaxWidth().height(132.dp), contentAlignment = Alignment.Center) {
-            Canvas(Modifier.fillMaxSize()) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Canvas(Modifier.size(180.dp)) {
                 val diametro = minOf(size.width, size.height)
                 val ancho = minOf(diametro * 0.03f, 8f)
                 val gap = 0.0035f
@@ -251,7 +256,8 @@ private fun DonaGrafica(categorias: List<Pair<String, Double>>) {
                     formatoMonto(total),
                     privacidad = Prefs.privacidad(estadoCtx()),
                     fuente = 23,
-                    peso = FontWeight.Light
+                    peso = FontWeight.Light,
+                    tnum = true
                 )
             }
         }
