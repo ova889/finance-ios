@@ -19,8 +19,9 @@ struct MainView: View {
     @State private var latido = false
     @State private var splash = true
     @State private var pulso = false
-    @State private var arrastreY: CGFloat = 0
+    @State private var dragOffset = CGSize.zero
     @State private var bloqueada = false
+    @State private var autenticando = false
     @Environment(\.scenePhase) private var scenePhase
     @Namespace private var navEspacio
     @Query private var movimientos: [Movimiento]
@@ -86,12 +87,16 @@ VStack(spacing: 0) {
                     withAnimation(.easeOut(duration: 0.5)) {
                         splash = false
                     }
+                    if laBiometriaDisponible() {
+                        bloqueada = true
+                        autenticar()
+                    }
                 }
             }
         }
         .onChange(of: scenePhase) { _, nueva in
             switch nueva {
-            case .background, .inactive:
+            case .background:
                 if !bloqueada && laBiometriaDisponible() {
                     bloqueada = true
                 }
@@ -143,6 +148,7 @@ VStack(spacing: 0) {
     }
 
     private func autenticar() {
+        guard !autenticando else { return }
         let contexto = LAContext()
         var error: NSError?
         guard contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
@@ -151,11 +157,13 @@ VStack(spacing: 0) {
             }
             return
         }
+        autenticando = true
         contexto.evaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics,
             localizedReason: "Unlock Wayne Finance"
         ) { exito, _ in
             DispatchQueue.main.async {
+                autenticando = false
                 withAnimation(.easeOut(duration: 0.35)) {
                     bloqueada = !exito
                 }
@@ -302,19 +310,21 @@ VStack(spacing: 0) {
         .padding(.horizontal, 16)
         .frame(height: 52)
         .background(barraCristal)
+        .clipShape(Capsule())
         .compositingGroup()
         .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
         .shadow(color: .black.opacity(0.35), radius: 24, x: 0, y: 12)
-        .offset(y: arrastreY)
+        .padding(.horizontal, 12)
+        .offset(y: dragOffset.height)
         .gesture(
             DragGesture()
                 .onChanged { valor in
                     let dy = valor.translation.height
-                    arrastreY = dy < 0 ? dy * 0.25 : dy * 0.45
+                    dragOffset = CGSize(width: 0, height: dy < 0 ? dy * 0.25 : dy * 0.45)
                 }
                 .onEnded { _ in
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                        arrastreY = 0
+                        dragOffset = .zero
                     }
                 }
         )
@@ -324,16 +334,13 @@ VStack(spacing: 0) {
     private var barraCristal: some View {
         ZStack {
             Capsule()
-                .fill(Color.black.opacity(0.75))
-            Capsule()
                 .fill(.ultraThinMaterial)
-                .opacity(0.55)
             Capsule()
-                .fill(Colores.accent.opacity(0.06))
+                .fill(Color.black.opacity(0.6))
             Capsule()
                 .fill(
                     LinearGradient(
-                        colors: [Color.white.opacity(0.08), .clear],
+                        colors: [Color.white.opacity(0.07), .clear],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
