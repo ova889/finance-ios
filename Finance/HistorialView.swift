@@ -344,7 +344,7 @@ struct SwipeEliminar<Contenido: View>: View {
 
     @State private var offset: CGFloat = 0
     @State private var arrastrando = false
-    private let anchoBotones: CGFloat = 90
+    private let anchoBotones: CGFloat = 76
 
     var body: some View {
         ZStack(alignment: .trailing) {
@@ -352,17 +352,18 @@ struct SwipeEliminar<Contenido: View>: View {
                 VStack(spacing: 3) {
                     IconoBasura()
                         .stroke(.white.opacity(0.85), style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round))
-                        .frame(width: 22, height: 22)
+                        .frame(width: 18, height: 18)
                     Text("Delete")
-                        .font(Fuente(10, .semibold))
+                        .font(Fuente(9.5, .semibold))
                         .kerning(0.3)
                 }
                 .foregroundColor(.white)
-                .frame(width: anchoBotones)
-                .frame(maxHeight: .infinity)
+                .frame(width: 72)
+                .padding(.vertical, 12)
                 .background(Colores.rojo)
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
+            .padding(.trailing, 10)
 
             contenido
                 .offset(x: offset)
