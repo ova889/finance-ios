@@ -63,7 +63,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.HazeSource
+import dev.chrisbanes.haze.hazeSource
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -115,7 +115,11 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
         Modifier
             .fillMaxSize()
     ) {
-        HazeSource(state = hazeState, zIndex = 0f) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .hazeSource(hazeState, zIndex = 0f)
+        ) {
             FondoGradiente()
             Column(
                 Modifier
