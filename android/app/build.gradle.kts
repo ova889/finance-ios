@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.wayne.finance"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.wayne.finance"
