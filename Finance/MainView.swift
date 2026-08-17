@@ -82,12 +82,12 @@ VStack(spacing: 0) {
             latido = true
             pulso = true
             if splash {
-                Task {
+                Task { @MainActor in
                     try? await Task.sleep(nanoseconds: 1_050_000_000)
                     withAnimation(.easeOut(duration: 0.5)) {
                         splash = false
                     }
-                    if laBiometriaDisponible() {
+                    if hayAutenticacion() {
                         bloqueada = true
                         autenticar()
                     }
@@ -97,7 +97,7 @@ VStack(spacing: 0) {
         .onChange(of: scenePhase) { _, nueva in
             switch nueva {
             case .background:
-                if !bloqueada && laBiometriaDisponible() {
+                if !bloqueada && hayAutenticacion() {
                     bloqueada = true
                 }
             case .active:
@@ -141,17 +141,21 @@ VStack(spacing: 0) {
         .background(Color.black)
     }
 
-    private func laBiometriaDisponible() -> Bool {
+    private func hayAutenticacion() -> Bool {
         let contexto = LAContext()
         var error: NSError?
-        return contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        let conBiometria = contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        if conBiometria { return true }
+        return contexto.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
     }
 
+    @MainActor
     private func autenticar() {
         guard !autenticando else { return }
         let contexto = LAContext()
         var error: NSError?
-        guard contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+        let biometrica = contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        guard biometrica || contexto.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
             withAnimation(.easeOut(duration: 0.3)) {
                 bloqueada = false
             }
@@ -161,11 +165,34 @@ VStack(spacing: 0) {
         contexto.evaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics,
             localizedReason: "Unlock Wayne Finance"
-        ) { exito, _ in
+        ) { exito, err in
+            let fallback = !exito && (err as? LAError).map {
+                $0.code == .biometryNotAvailable || $0.code == .biometryNotEnrolled || $0.code == .biometryLockout
+            } ?? false
+            DispatchQueue.main.async {
+                autenticarFallback(si: fallback, exito: exito)
+            }
+        }
+    }
+
+    @MainActor
+    private func autenticarFallback(si esNecesario: Bool, exito: Bool) {
+        guard esNecesario else {
+            autenticando = false
+            withAnimation(.easeOut(duration: 0.35)) {
+                bloqueada = !exito
+            }
+            return
+        }
+        let contexto = LAContext()
+        contexto.evaluatePolicy(
+            .deviceOwnerAuthentication,
+            localizedReason: "Unlock Wayne Finance"
+        ) { exito2, _ in
             DispatchQueue.main.async {
                 autenticando = false
                 withAnimation(.easeOut(duration: 0.35)) {
-                    bloqueada = !exito
+                    bloqueada = !exito2
                 }
             }
         }
