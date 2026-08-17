@@ -15,17 +15,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -33,6 +37,11 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,6 +50,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.os.Build
 
 object Colores {
     val verde = Color(0xFF30D158)
@@ -317,14 +327,57 @@ fun MontoPrivado(
     tnum: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.material3.Text(
-        texto,
-        fontSize = fuente.sp,
-        fontWeight = peso,
-        color = color,
-        style = if (tnum) TextStyle(fontFeatureSettings = "tnum") else TextStyle.Default,
-        modifier = modifier.blur(if (privacidad) 8.dp else 0.dp)
-    )
+    if (!privacidad) {
+        androidx.compose.material3.Text(
+            texto,
+            fontSize = fuente.sp,
+            fontWeight = peso,
+            color = color,
+            style = if (tnum) TextStyle(fontFeatureSettings = "tnum") else TextStyle.Default,
+            modifier = modifier
+        )
+        return
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        androidx.compose.material3.Text(
+            texto,
+            fontSize = fuente.sp,
+            fontWeight = peso,
+            color = color,
+            style = if (tnum) TextStyle(fontFeatureSettings = "tnum") else TextStyle.Default,
+            modifier = modifier
+                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                .blur(10.dp)
+                .semantics { contentDescription = "Monto oculto" }
+        )
+        return
+    }
+    var wPx by remember { mutableIntStateOf(0) }
+    var hPx by remember { mutableIntStateOf(0) }
+    val densidad = LocalDensity.current
+    Box(modifier) {
+        Box(
+            Modifier
+                .size(
+                    with(densidad) { (if (wPx > 0) wPx else 64).toDp() },
+                    with(densidad) { (if (hPx > 0) hPx else 16).toDp() }
+                )
+                .clip(RoundedCornerShape(4.dp))
+                .background(color.copy(alpha = 0.35f))
+        )
+        androidx.compose.material3.Text(
+            texto,
+            fontSize = fuente.sp,
+            fontWeight = peso,
+            color = color,
+            style = if (tnum) TextStyle(fontFeatureSettings = "tnum") else TextStyle.Default,
+            onTextLayout = { r ->
+                wPx = r.size.width
+                hPx = r.size.height
+            },
+            modifier = Modifier.alpha(0f)
+        )
+    }
 }
 
 @Composable
