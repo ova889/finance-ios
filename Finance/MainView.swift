@@ -228,20 +228,21 @@ VStack(spacing: 0) {
     private var barraCristal: some View {
         ZStack {
             Capsule()
-                .fill(Color.black.opacity(0.4))
+                .fill(Color(red: 0.03, green: 0.03, blue: 0.05).opacity(0.8))
             Capsule()
                 .fill(.ultraThinMaterial)
-                .saturation(1.8)
+                .opacity(0.55)
+                .blendMode(.plusLighter)
             Capsule()
-                .fill(Colores.accent.opacity(0.06))
+                .fill(Colores.accent.opacity(0.07))
             Capsule()
                 .fill(
                     LinearGradient(
-                        colors: [Color.white.opacity(0.12), .clear],
+                        colors: [Color.white.opacity(0.10), .clear],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
-                .frame(height: 26)
+                .frame(height: 22)
                 .padding(.horizontal, 1)
                 .blendMode(.overlay)
                 .allowsHitTesting(false)

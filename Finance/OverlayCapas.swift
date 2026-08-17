@@ -56,8 +56,8 @@ struct DropdownHost: View {
         @EnvironmentObject private var capas: OverlayCapas
 
         private var anchoPanel: CGFloat { max(pedido.ancho, 200) }
-        private var altoFila: CGFloat { 36 }
-        private var altoMaximo: CGFloat { 240 }
+        private var altoFila: CGFloat { 34 }
+        private var altoMaximo: CGFloat { 200 }
 
         var body: some View {
             let altoFilas = CGFloat(pedido.opciones.count) * altoFila + 12
@@ -107,8 +107,8 @@ struct DropdownHost: View {
                     }
                 }
                 .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .frame(height: 36)
+                .padding(.vertical, 9)
+                .frame(height: 34)
                 .contentShape(Rectangle())
             }
             .buttonStyle(PressStyle(escala: 0.97))
