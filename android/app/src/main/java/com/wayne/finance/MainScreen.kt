@@ -171,7 +171,8 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
         barraNavegacion(
             tab = tab,
             onTab = { tab = it },
-            hazeState = hazeState
+            hazeState = hazeState,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
 
         toast?.let {
@@ -330,7 +331,8 @@ private fun topBar(
 private fun barraNavegacion(
     tab: TabPrincipal,
     onTab: (TabPrincipal) -> Unit,
-    hazeState: HazeState
+    hazeState: HazeState,
+    modifier: Modifier = Modifier
 ) {
     val dyTotal = remember { mutableStateOf(0f) }
     val offsetY = remember { Animatable(0f) }
@@ -338,10 +340,9 @@ private fun barraNavegacion(
     val haptico = LocalHapticFeedback.current
 
     BoxWithConstraints(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .widthIn(max = 480.dp)
-            .align(Alignment.BottomCenter)
             .padding(horizontal = 12.dp)
             .navigationBarsPadding()
             .padding(bottom = 24.dp)
