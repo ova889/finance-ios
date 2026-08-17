@@ -322,7 +322,7 @@ fun MontoPrivado(
         fontSize = fuente.sp,
         fontWeight = peso,
         color = color,
-        fontFeatureSettings = if (tnum) "tnum" else "",
+        style = if (tnum) TextStyle(fontFeatureSettings = "tnum") else TextStyle.Default,
         modifier = modifier.blur(if (privacidad) 8.dp else 0.dp)
     )
 }
