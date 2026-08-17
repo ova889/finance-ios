@@ -152,8 +152,8 @@ fun HistorialScreen(estado: AppState) {
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                TarjetaResumen("Income", formatoMonto(totalIngresos), Colores.verde, Prefs.privacidad(estado.ctx), Modifier.weight(1f))
-                TarjetaResumen("Expenses", formatoMonto(totalGastos), Colores.rojo, Prefs.privacidad(estado.ctx), Modifier.weight(1f))
+                TarjetaResumen("Income", formatoMonto(totalIngresos), Colores.verde, estado.privacidad, Modifier.weight(1f))
+                TarjetaResumen("Expenses", formatoMonto(totalGastos), Colores.rojo, estado.privacidad, Modifier.weight(1f))
             }
 
             Row(
@@ -200,7 +200,7 @@ fun HistorialScreen(estado: AppState) {
                                 m = m,
                                 onTap = { movimientoAEditar = m },
                                 onEliminar = { pendienteEliminar = m },
-                                privacidad = Prefs.privacidad(estado.ctx)
+                                privacidad = estado.privacidad
                             )
                         }
                     }

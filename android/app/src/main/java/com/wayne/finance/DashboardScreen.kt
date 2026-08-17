@@ -132,7 +132,7 @@ fun DashboardScreen(estado: AppState) {
 
 @Composable
 private fun filaResumen(estado: AppState) {
-    val privacidad = Prefs.privacidad(estado.ctx)
+    val privacidad = estado.privacidad
     Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
         TarjetaResumen("Income", formatoMonto(estado.ingresos()), Colores.verde, privacidad, Modifier.weight(1f))
         TarjetaResumen("Expenses", formatoMonto(estado.gastos()), Colores.rojo, privacidad, Modifier.weight(1f))
@@ -196,14 +196,14 @@ private fun tarjetaCategorias(estado: AppState) {
                 )
                 Box(Modifier.size(1.dp))
             } else {
-                DonaGrafica(categorias)
+                DonaGrafica(categorias, estado.privacidad)
             }
         }
     }
 }
 
 @Composable
-private fun DonaGrafica(categorias: List<Pair<String, Double>>) {
+private fun DonaGrafica(categorias: List<Pair<String, Double>>, privacidad: Boolean) {
     var activas by remember { mutableStateOf(setOf<String>()) }
     var avanzado by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { avanzado = true }
@@ -254,7 +254,7 @@ private fun DonaGrafica(categorias: List<Pair<String, Double>>) {
                 Spacer(Modifier.height(4.dp))
                 MontoPrivado(
                     formatoMonto(total),
-                    privacidad = Prefs.privacidad(estadoCtx()),
+                    privacidad = privacidad,
                     fuente = 23,
                     peso = FontWeight.Light,
                     tnum = true
@@ -291,7 +291,7 @@ private fun DonaGrafica(categorias: List<Pair<String, Double>>) {
                     )
                     MontoPrivado(
                         formatoMonto(valor),
-                        privacidad = Prefs.privacidad(estadoCtx()),
+                        privacidad = privacidad,
                         fuente = 13,
                         peso = FontWeight.SemiBold,
                         color = Color.White.copy(alpha = if (encendida) 1f else 0.35f)
@@ -318,9 +318,6 @@ private fun DonaGrafica(categorias: List<Pair<String, Double>>) {
 }
 
 @Composable
-private fun estadoCtx(): android.content.Context = androidx.compose.ui.platform.LocalContext.current
-
-@Composable
 private fun tarjetaRecientes(estado: AppState) {
     val ultimos = estado.ultimos(6)
     CristalCard(padding = 16.dp) {
@@ -333,7 +330,7 @@ private fun tarjetaRecientes(estado: AppState) {
                     color = Colores.textoSec
                 )
             } else {
-                val privacidad = Prefs.privacidad(estado.ctx)
+                val privacidad = estado.privacidad
                 ultimos.forEach { m ->
                     Row(
                         Modifier
@@ -396,7 +393,7 @@ private fun tarjetaMetas(
                     Spacer(Modifier.width(4.dp))
                     MontoPrivado(
                         formatoMonto(metas.sumOf { it.ahorrado }),
-                        privacidad = Prefs.privacidad(estado.ctx),
+                        privacidad = estado.privacidad,
                         fuente = 11,
                         peso = FontWeight.SemiBold
                     )
@@ -501,7 +498,7 @@ private fun filaMeta(estado: AppState, meta: Meta, onEliminar: (Meta) -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MontoPrivado(
                         formatoMonto(meta.ahorrado),
-                        privacidad = Prefs.privacidad(estado.ctx),
+                        privacidad = estado.privacidad,
                         fuente = 11,
                         peso = FontWeight.SemiBold,
                         color = Colores.verde
@@ -509,7 +506,7 @@ private fun filaMeta(estado: AppState, meta: Meta, onEliminar: (Meta) -> Unit) {
                     Text(" de ", fontSize = 11.sp, color = Colores.textoSec)
                     MontoPrivado(
                         formatoMonto(meta.objetivo),
-                        privacidad = Prefs.privacidad(estado.ctx),
+                        privacidad = estado.privacidad,
                         fuente = 11,
                         color = Color.White.copy(alpha = 0.5f)
                     )

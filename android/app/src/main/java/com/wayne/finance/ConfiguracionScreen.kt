@@ -36,7 +36,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ConfiguracionScreen(estado: AppState, onSalir: () -> Unit) {
-    var privacidad by remember { mutableStateOf(Prefs.privacidad(estado.ctx)) }
     var textoPendientes by remember { mutableStateOf("No pending operations") }
     var etapaAlerta by remember { mutableIntStateOf(0) }
     var cargado by remember { mutableStateOf(false) }
@@ -58,11 +57,8 @@ fun ConfiguracionScreen(estado: AppState, onSalir: () -> Unit) {
             Interruptor(
                 texto = "Privacy Mode",
                 subtitulo = "Blurs all amounts on screen",
-                activo = privacidad,
-                onCambiar = {
-                    privacidad = !privacidad
-                    Prefs.setPrivacidad(estado.ctx, privacidad)
-                }
+                activo = estado.privacidad,
+                onCambiar = { estado.setPrivacidad(!estado.privacidad) }
             )
         }
 

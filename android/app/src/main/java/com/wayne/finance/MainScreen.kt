@@ -130,7 +130,7 @@ fun MainScreen(userId: String, onSalir: () -> Unit) {
             topBar(
                 balance = estado.saldo(),
                 latido = pulsoLatido,
-                privacidad = Prefs.privacidad(ctx),
+                privacidad = estado.privacidad,
                 onTitulo = {
                     tapBrand += 1
                     if (tapBrand >= 2) {
