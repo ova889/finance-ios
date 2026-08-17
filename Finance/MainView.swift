@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import LocalAuthentication
 
 enum TabPrincipal: String, CaseIterable {
     case dashboard = "Dashboard"
@@ -20,9 +19,6 @@ struct MainView: View {
     @State private var splash = true
     @State private var pulso = false
     @State private var dragOffset = CGSize.zero
-    @State private var bloqueada = false
-    @State private var autenticando = false
-    @Environment(\.scenePhase) private var scenePhase
     @Namespace private var navEspacio
     @Query private var movimientos: [Movimiento]
 
@@ -69,13 +65,6 @@ VStack(spacing: 0) {
                     .ignoresSafeArea()
                     .transition(.opacity)
             }
-
-            if bloqueada {
-                pantallaBloqueo
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-                    .zIndex(2000)
-            }
         }
         .preferredColorScheme(.dark)
         .onAppear {
@@ -87,112 +76,6 @@ VStack(spacing: 0) {
                     withAnimation(.easeOut(duration: 0.5)) {
                         splash = false
                     }
-                    if hayAutenticacion() {
-                        bloqueada = true
-                        autenticar()
-                    }
-                }
-            }
-        }
-        .onChange(of: scenePhase) { _, nueva in
-            switch nueva {
-            case .background:
-                if !bloqueada && hayAutenticacion() {
-                    bloqueada = true
-                }
-            case .active:
-                if bloqueada {
-                    autenticar()
-                }
-            default:
-                break
-            }
-        }
-    }
-
-    private var pantallaBloqueo: some View {
-        ZStack {
-            Fondo.gradiente
-            VStack(spacing: 14) {
-                IconoW()
-                    .foregroundStyle(Color.white)
-                    .frame(width: 38, height: 38)
-                Text("FINANCE")
-                    .font(Fuente(18, .bold))
-                    .kerning(6)
-                    .foregroundColor(.white)
-                Text("Locked")
-                    .font(Fuente(12))
-                    .foregroundColor(.white.opacity(0.4))
-                Button {
-                    autenticar()
-                } label: {
-                    Image(systemName: "faceid")
-                        .font(Fuente(28))
-                        .foregroundColor(.white.opacity(0.6))
-                        .frame(width: 64, height: 64)
-                        .background(Color.white.opacity(0.06))
-                        .clipShape(Circle())
-                }
-                .buttonStyle(PressStyle(escala: 0.92))
-                .padding(.top, 8)
-            }
-        }
-        .background(Color.black)
-    }
-
-    private func hayAutenticacion() -> Bool {
-        let contexto = LAContext()
-        var error: NSError?
-        let conBiometria = contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
-        if conBiometria { return true }
-        return contexto.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
-    }
-
-    @MainActor
-    private func autenticar() {
-        guard !autenticando else { return }
-        let contexto = LAContext()
-        var error: NSError?
-        let biometrica = contexto.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
-        guard biometrica || contexto.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            withAnimation(.easeOut(duration: 0.3)) {
-                bloqueada = false
-            }
-            return
-        }
-        autenticando = true
-        contexto.evaluatePolicy(
-            .deviceOwnerAuthenticationWithBiometrics,
-            localizedReason: "Unlock Wayne Finance"
-        ) { exito, err in
-            let fallback = !exito && (err as? LAError).map {
-                $0.code == .biometryNotAvailable || $0.code == .biometryNotEnrolled || $0.code == .biometryLockout
-            } ?? false
-            DispatchQueue.main.async {
-                autenticarFallback(si: fallback, exito: exito)
-            }
-        }
-    }
-
-    @MainActor
-    private func autenticarFallback(si esNecesario: Bool, exito: Bool) {
-        guard esNecesario else {
-            autenticando = false
-            withAnimation(.easeOut(duration: 0.35)) {
-                bloqueada = !exito
-            }
-            return
-        }
-        let contexto = LAContext()
-        contexto.evaluatePolicy(
-            .deviceOwnerAuthentication,
-            localizedReason: "Unlock Wayne Finance"
-        ) { exito2, _ in
-            DispatchQueue.main.async {
-                autenticando = false
-                withAnimation(.easeOut(duration: 0.35)) {
-                    bloqueada = !exito2
                 }
             }
         }
